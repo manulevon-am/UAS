@@ -446,39 +446,8 @@ export function MandateMap({
             </svg>
           </div>
 
-          <div className="relative z-10 mt-4 grid gap-2">
-            {markers.map((marker) => {
-              const active = mobileSelectedMarker?.id === marker.id;
-
-              return (
-                <button
-                  key={`mobile-button-${marker.id}`}
-                  type="button"
-                  onClick={() => setSelectedMarkerId(marker.id)}
-                  className={cn(
-                    "flex items-center justify-between rounded-2xl border px-4 py-3 text-left transition",
-                    active
-                      ? "border-[rgba(142,106,42,0.24)] bg-[rgba(255,255,255,0.92)] shadow-[0_12px_28px_rgba(15,23,42,0.08)]"
-                      : "border-[var(--color-border)] bg-white/76",
-                  )}
-                >
-                  <div className="min-w-0 pr-4">
-                    <div className="text-sm font-semibold text-[var(--color-graphite)]">
-                      {marker.title}
-                    </div>
-                    <div className="mt-1 text-[11px] uppercase tracking-[0.18em] text-[var(--color-graphite-soft)]">
-                      {locale === "ru" ? "Мандаты" : locale === "en" ? "Mandates" : "Մանդատներ"}
-                    </div>
-                  </div>
-                  <div className="text-lg font-semibold text-[var(--color-gold)]">
-                    {marker.seatsTotal}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
         </div>
-        </Card>
+      </Card>
       ) : null}
 
       {isDesktop ? (
