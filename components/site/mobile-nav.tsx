@@ -33,7 +33,7 @@ export function MobileNav({
       </Button>
       <div
         className={cn(
-          "pointer-events-none absolute left-4 right-4 top-[76px] rounded-[24px] border border-[var(--color-border)] bg-white p-4 opacity-0 shadow-[0_20px_50px_rgba(15,23,42,0.12)] transition",
+          "pointer-events-none fixed left-3 right-3 top-[68px] z-[60] rounded-[24px] border border-[var(--color-border)] bg-white p-4 opacity-0 shadow-[0_20px_50px_rgba(15,23,42,0.12)] transition sm:left-4 sm:right-4 sm:top-[76px]",
           open && "pointer-events-auto opacity-100",
         )}
       >

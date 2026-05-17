@@ -20,22 +20,27 @@ export function Header({
 }) {
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--color-border)] bg-[rgba(252,252,250,0.92)] backdrop-blur-xl">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-4 sm:px-6 lg:px-8">
-        <Link href={getLocalizedPath(locale, "home")} className="flex shrink-0 items-center gap-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:gap-6 sm:px-6 sm:py-4 lg:px-8">
+        <Link href={getLocalizedPath(locale, "home")} className="flex min-w-0 shrink items-center gap-2 sm:gap-3">
           <Image
             src={withBasePath("/uas.avif")}
             alt="United Armenian Senate"
             width={48}
             height={48}
-            className="h-12 w-12 rounded-full object-cover"
+            className="h-10 w-10 rounded-full object-cover sm:h-12 sm:w-12"
             priority
           />
-          <div className="text-sm font-extrabold tracking-[0.08em] text-[var(--color-gold)] sm:text-base">
-            {locale === "ru"
-              ? "Всеармянский Сенат"
-              : locale === "hy"
-                ? "Համահայկական Սենատ"
-                : "United Armenian Senate"}
+          <div className="min-w-0">
+            <div className="truncate text-sm font-extrabold tracking-[0.05em] text-[var(--color-gold)] max-[389px]:hidden sm:text-base">
+              {locale === "ru"
+                ? "Всеармянский Сенат"
+                : locale === "hy"
+                  ? "Համահայկական Սենատ"
+                  : "United Armenian Senate"}
+            </div>
+            <div className="text-sm font-extrabold tracking-[0.08em] text-[var(--color-gold)] min-[390px]:hidden">
+              UAS
+            </div>
           </div>
         </Link>
 
@@ -56,7 +61,7 @@ export function Header({
           </Link>
         </div>
 
-        <div className="flex items-center gap-3 lg:hidden">
+        <div className="flex shrink-0 items-center gap-2 lg:hidden">
           <LocaleSwitcher />
           <MobileNav locale={locale} items={navigation.items} ctaLabel={navigation.cta} />
         </div>

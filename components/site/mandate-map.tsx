@@ -348,6 +348,32 @@ export function MandateMap({
 
         <div className="relative overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#f6faf7_100%)] p-4">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(183,138,55,0.10),transparent_28%),radial-gradient(circle_at_20%_90%,rgba(23,107,77,0.08),transparent_30%)]" />
+          <div className="relative z-10 mb-4 grid grid-cols-3 gap-2">
+            <div className="rounded-2xl border border-[var(--color-border)] bg-white/84 px-3 py-3 text-center">
+              <div className="text-[10px] uppercase tracking-[0.16em] text-[var(--color-graphite-soft)]">
+                {locale === "ru" ? "Всего" : locale === "en" ? "Total" : "Ընդամենը"}
+              </div>
+              <div className="mt-1 text-lg font-semibold text-[var(--color-graphite)]">
+                {totals.seatsTotal}
+              </div>
+            </div>
+            <div className="rounded-2xl border border-[var(--color-border)] bg-white/84 px-3 py-3 text-center">
+              <div className="text-[10px] uppercase tracking-[0.16em] text-[var(--color-graphite-soft)]">
+                {locale === "ru" ? "Занято" : locale === "en" ? "Occupied" : "Զբաղված"}
+              </div>
+              <div className="mt-1 text-lg font-semibold text-[var(--color-graphite)]">
+                {totals.seatsOccupied}
+              </div>
+            </div>
+            <div className="rounded-2xl border border-[var(--color-border)] bg-white/84 px-3 py-3 text-center">
+              <div className="text-[10px] uppercase tracking-[0.16em] text-[var(--color-graphite-soft)]">
+                {locale === "ru" ? "Свободно" : locale === "en" ? "Free" : "Ազատ"}
+              </div>
+              <div className="mt-1 text-lg font-semibold text-[var(--color-green)]">
+                {totals.seatsFree}
+              </div>
+            </div>
+          </div>
           <div className="relative z-10 overflow-hidden rounded-[24px] border border-[var(--color-border)] bg-white/72">
             <svg viewBox={`0 0 ${MAP_WIDTH} ${MAP_HEIGHT}`} className="h-auto w-full" aria-hidden="true">
               <path d={graticulePath} fill="none" stroke="rgba(31,41,55,0.06)" strokeWidth="1" />

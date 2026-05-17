@@ -21,7 +21,7 @@ export function LocaleSwitcher() {
             key={locale}
             href={href}
             className={cn(
-              "rounded-full px-3 py-2 text-xs font-semibold tracking-[0.22em] transition",
+              "rounded-full px-2.5 py-2 text-[11px] font-semibold tracking-[0.16em] transition sm:px-3 sm:text-xs sm:tracking-[0.22em]",
               locale === activeLocale
                 ? "bg-[var(--color-green-soft)] text-[var(--color-green)]"
                 : "text-[var(--color-graphite-soft)] hover:text-[var(--color-graphite)]",
