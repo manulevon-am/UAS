@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { AnimatedSection } from "@/components/site/animated-section";
 import { BodiesGrid } from "@/components/site/bodies-grid";
 import { MandateMap } from "@/components/site/mandate-map";
+import { MandateDistributionAccordion } from "@/components/site/mandate-distribution-accordion";
 import { PageHero } from "@/components/site/page-hero";
 import { SectionHeading } from "@/components/site/section-heading";
 import { structurePageContent, homePageContent } from "@/data/site-content";
@@ -45,6 +46,9 @@ export default async function StructurePage({
             description={homePageContent.structureText[locale]}
           />
           <MandateMap locale={locale} className="mt-8" />
+          <div className="mt-6">
+            <MandateDistributionAccordion locale={locale} />
+          </div>
         </AnimatedSection>
 
         <AnimatedSection>

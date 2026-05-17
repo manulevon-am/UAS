@@ -6,7 +6,6 @@ import { feature } from "topojson-client";
 import worldLand from "world-atlas/land-110m.json";
 import type { JsVectorMapInstance } from "jsvectormap";
 
-import { MandateDistributionAccordion } from "@/components/site/mandate-distribution-accordion";
 import { Card } from "@/components/ui/card";
 import { getMandateOverview, institutionBlocks, mandateMapGroups } from "@/data/site-content";
 import type { Locale } from "@/lib/i18n";
@@ -60,6 +59,7 @@ export function MandateMap({
   className?: string;
   compact?: boolean;
 }) {
+  const [isDesktop, setIsDesktop] = useState(false);
   const [selectedMarkerId, setSelectedMarkerId] = useState<string | null>(null);
   const [calloutPositions, setCalloutPositions] = useState<CalloutPosition>({});
   const [mapHeight, setMapHeight] = useState(520);
@@ -103,7 +103,37 @@ export function MandateMap({
   }, [mapHeight, mapWidth, selectedMarker, selectedPoint]);
 
   useEffect(() => {
-    if (compact || !mapWrapperRef.current) {
+    if (compact || typeof window === "undefined") {
+      return;
+    }
+
+    const mediaQuery = window.matchMedia("(min-width: 1024px)");
+    const legacyMediaQuery = mediaQuery as MediaQueryList & {
+      addListener?: (listener: (event: MediaQueryListEvent) => void) => void;
+      removeListener?: (listener: (event: MediaQueryListEvent) => void) => void;
+    };
+    const syncDesktopMode = () => {
+      setIsDesktop(mediaQuery.matches);
+    };
+
+    syncDesktopMode();
+    if ("addEventListener" in mediaQuery) {
+      mediaQuery.addEventListener("change", syncDesktopMode);
+    } else if (legacyMediaQuery.addListener) {
+      legacyMediaQuery.addListener(syncDesktopMode);
+    }
+
+    return () => {
+      if ("removeEventListener" in mediaQuery) {
+        mediaQuery.removeEventListener("change", syncDesktopMode);
+      } else if (legacyMediaQuery.removeListener) {
+        legacyMediaQuery.removeListener(syncDesktopMode);
+      }
+    };
+  }, [compact]);
+
+  useEffect(() => {
+    if (compact || !isDesktop || !mapWrapperRef.current) {
       return;
     }
 
@@ -134,10 +164,10 @@ export function MandateMap({
     return () => {
       resizeObserver.disconnect();
     };
-  }, [compact]);
+  }, [compact, isDesktop]);
 
   useEffect(() => {
-    if (compact) {
+    if (compact || !isDesktop) {
       return;
     }
 
@@ -237,10 +267,10 @@ export function MandateMap({
       mapRef.current?.destroy();
       mapRef.current = null;
     };
-  }, [compact, markers]);
+  }, [compact, isDesktop, markers]);
 
   useEffect(() => {
-    if (compact || !mapRef.current) {
+    if (compact || !isDesktop || !mapRef.current) {
       return;
     }
 
@@ -261,7 +291,7 @@ export function MandateMap({
     return () => {
       window.cancelAnimationFrame(syncAfterResize);
     };
-  }, [compact, mapHeight, markers]);
+  }, [compact, isDesktop, mapHeight, markers]);
 
   if (compact) {
     return (
@@ -331,8 +361,9 @@ export function MandateMap({
   }
 
   return (
-    <div className={cn("space-y-6", className)}>
-      <Card className="overflow-hidden p-0 lg:hidden">
+    <div className={cn("", className)}>
+      {!isDesktop ? (
+        <Card className="overflow-hidden p-0">
         <div className="border-b border-[var(--color-border)] px-5 py-4">
           <div className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--color-gold)]">
             {locale === "ru" ? "Карта распределения" : locale === "en" ? "Distribution map" : "Բաշխման քարտեզ"}
@@ -447,9 +478,11 @@ export function MandateMap({
             })}
           </div>
         </div>
-      </Card>
+        </Card>
+      ) : null}
 
-      <Card className="hidden overflow-hidden p-0 lg:block">
+      {isDesktop ? (
+        <Card className="overflow-hidden p-0">
         <div className="border-b border-[var(--color-border)] px-5 py-4">
           <div className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--color-gold)]">
             {locale === "ru" ? "Карта распределения" : locale === "en" ? "Distribution map" : "Բաշխման քարտեզ"}
@@ -522,9 +555,8 @@ export function MandateMap({
           </div>
         </div>
 
-      </Card>
-
-      <MandateDistributionAccordion locale={locale} />
+        </Card>
+      ) : null}
     </div>
   );
 }

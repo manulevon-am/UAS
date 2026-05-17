@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { AnimatedSection } from "@/components/site/animated-section";
 import { HeroCobeGlobe } from "@/components/site/hero-cobe-globe";
 import { MandateMap } from "@/components/site/mandate-map";
+import { MandateDistributionAccordion } from "@/components/site/mandate-distribution-accordion";
 import { SectionHeading } from "@/components/site/section-heading";
 import { UasSystemDiagram } from "@/components/site/uas-system-diagram";
 import { Button } from "@/components/ui/button";
@@ -91,6 +92,9 @@ export default async function HomePage({
             description={homePageContent.structureText[locale]}
           />
           <MandateMap locale={locale} className="mt-8" />
+          <div className="mt-6">
+            <MandateDistributionAccordion locale={locale} />
+          </div>
         </AnimatedSection>
 
         <AnimatedSection>

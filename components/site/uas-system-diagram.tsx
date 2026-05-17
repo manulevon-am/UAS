@@ -234,11 +234,11 @@ export function UasSystemDiagram({ locale }: { locale: Locale }) {
         width: containerRect.width,
         height: containerRect.height,
         leftHub: {
-          x: centerRect.left - containerRect.left + 2,
+          x: centerRect.left - containerRect.left - 16,
           y: centerRect.top - containerRect.top + centerRect.height / 2,
         },
         rightHub: {
-          x: centerRect.right - containerRect.left - 2,
+          x: centerRect.right - containerRect.left + 16,
           y: centerRect.top - containerRect.top + centerRect.height / 2,
         },
         leftPoints,
@@ -379,6 +379,21 @@ export function UasSystemDiagram({ locale }: { locale: Locale }) {
           </motion.svg>
         ) : null}
 
+        {layout ? (
+          <>
+            <HubNode
+              x={layout.leftHub.x}
+              y={layout.leftHub.y}
+              tone="left"
+            />
+            <HubNode
+              x={layout.rightHub.x}
+              y={layout.rightHub.y}
+              tone="right"
+            />
+          </>
+        ) : null}
+
         <div className="relative z-10 flex flex-col gap-5 py-4">
           <div className="mb-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--color-gold)]">
             {copy.organizationLabel}
@@ -413,23 +428,6 @@ export function UasSystemDiagram({ locale }: { locale: Locale }) {
         </div>
 
         <div className="relative z-20 flex items-center justify-center">
-          {layout ? (
-            <>
-              <HubNode
-                x={layout.leftHub.x}
-                y={layout.leftHub.y}
-                tone="left"
-                active={hoveredId ? leftItems.some((item) => item.id === hoveredId) : false}
-              />
-              <HubNode
-                x={layout.rightHub.x}
-                y={layout.rightHub.y}
-                tone="right"
-                active={hoveredId ? rightItems.some((item) => item.id === hoveredId) : false}
-              />
-            </>
-          ) : null}
-
           <motion.div
             ref={centerRef}
             initial={reduceMotion ? undefined : { opacity: 0, y: 18, scale: 0.96 }}
@@ -669,62 +667,23 @@ function HubNode({
   x,
   y,
   tone,
-  active,
 }: {
   x: number;
   y: number;
   tone: "left" | "right";
-  active: boolean;
 }) {
-  const reduceMotion = useReducedMotion();
-
   return (
-    <motion.div
+    <div
       className="pointer-events-none absolute z-30"
-      style={{ left: x, top: y, x: "-50%", y: "-50%" }}
-      animate={
-        reduceMotion
-          ? undefined
-          : {
-              scale: active ? [1, 1.12, 1] : [1, 1.05, 1],
-              boxShadow: active
-                ? tone === "left"
-                  ? [
-                      "0 0 0 0 rgba(183,138,55,0.20)",
-                      "0 0 0 10px rgba(183,138,55,0.08)",
-                      "0 0 0 0 rgba(183,138,55,0.20)",
-                    ]
-                  : [
-                      "0 0 0 0 rgba(23,107,77,0.18)",
-                      "0 0 0 10px rgba(23,107,77,0.08)",
-                      "0 0 0 0 rgba(23,107,77,0.18)",
-                    ]
-                : tone === "left"
-                  ? [
-                      "0 0 0 0 rgba(183,138,55,0.12)",
-                      "0 0 0 8px rgba(183,138,55,0.04)",
-                      "0 0 0 0 rgba(183,138,55,0.12)",
-                    ]
-                  : [
-                      "0 0 0 0 rgba(23,107,77,0.12)",
-                      "0 0 0 8px rgba(23,107,77,0.04)",
-                      "0 0 0 0 rgba(23,107,77,0.12)",
-                    ],
-            }
-      }
-      transition={{
-        duration: 2.2,
-        repeat: reduceMotion ? 0 : Infinity,
-        ease: "easeInOut",
-      }}
+      style={{ left: x, top: y, transform: "translate(-50%, -50%)" }}
     >
       <div
         className={cn(
-          "h-3.5 w-3.5 rounded-full border border-white/90",
+          "h-3.5 w-3.5 rounded-full border border-white/90 shadow-[0_0_0_6px_rgba(255,255,255,0.72)]",
           tone === "left" ? "bg-[var(--color-gold)]" : "bg-[var(--color-green)]",
         )}
       />
-    </motion.div>
+    </div>
   );
 }
 
