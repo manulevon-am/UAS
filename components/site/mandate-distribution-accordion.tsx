@@ -18,7 +18,7 @@ export function MandateDistributionAccordion({ locale }: { locale: Locale }) {
           return (
           <details key={section.id} className="group bg-white">
             <summary className="list-none cursor-pointer px-4 py-4 sm:px-5">
-              <div className="grid gap-4 lg:grid-cols-[56px_minmax(0,1fr)_96px_96px_96px_96px_150px] lg:items-center">
+              <div className="hidden gap-4 lg:grid lg:grid-cols-[56px_minmax(0,1fr)_96px_96px_96px_96px_150px] lg:items-center">
                 <div className="text-lg font-semibold text-[var(--color-gold)]">
                   {section.index}
                 </div>
@@ -35,6 +35,35 @@ export function MandateDistributionAccordion({ locale }: { locale: Locale }) {
                 <Stat value={section.seatsOccupied} label={locale === "ru" ? "Избрано" : locale === "en" ? "Elected" : "Ընտրված"} />
                 <Stat value={section.candidates} label={locale === "ru" ? "Кандидаты" : locale === "en" ? "Candidates" : "Թեկնածուներ"} />
                 <div className="lg:text-right">
+                  <Link href={`/${locale}/distribution/${section.id}`} className="inline-flex">
+                    <Button variant="secondary" size="sm">
+                      {locale === "ru" ? "Подробнее" : locale === "en" ? "Details" : "Մանրամասն"}
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+
+              <div className="grid gap-4 lg:hidden">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-gold)]">
+                      {section.index}
+                    </div>
+                    <div className="mt-2 text-base font-semibold leading-6 text-[var(--color-graphite)]">
+                      {section.title[locale]}
+                    </div>
+                  </div>
+                  <ChevronDown className="mt-1 h-4 w-4 shrink-0 text-[var(--color-graphite-soft)] transition-transform group-open:rotate-180" />
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <Stat value={section.seatsTotal} label={locale === "ru" ? "Всего" : locale === "en" ? "Total" : "Ընդամենը"} />
+                  <Stat value={freeSeats} label={locale === "ru" ? "Свободно" : locale === "en" ? "Free" : "Ազատ"} accent />
+                  <Stat value={section.seatsOccupied} label={locale === "ru" ? "Избрано" : locale === "en" ? "Elected" : "Ընտրված"} />
+                  <Stat value={section.candidates} label={locale === "ru" ? "Кандидаты" : locale === "en" ? "Candidates" : "Թեկնածուներ"} />
+                </div>
+
+                <div>
                   <Link href={`/${locale}/distribution/${section.id}`} className="inline-flex">
                     <Button variant="secondary" size="sm">
                       {locale === "ru" ? "Подробнее" : locale === "en" ? "Details" : "Մանրամասն"}

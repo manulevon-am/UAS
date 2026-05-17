@@ -41,6 +41,16 @@ const regionCoordinates: Record<string, [number, number]> = {
 
 type CalloutPosition = Record<string, { x: number; y: number }>;
 
+function projectMarker(coords: [number, number]) {
+  const [lat, lon] = coords;
+  const projected = projection([lon, lat]);
+  if (!projected) {
+    return null;
+  }
+
+  return { x: projected[0], y: projected[1] };
+}
+
 export function MandateMap({
   locale,
   className,
@@ -74,6 +84,7 @@ export function MandateMap({
     () => markers.find((marker) => marker.id === selectedMarkerId) ?? null,
     [markers, selectedMarkerId],
   );
+  const mobileSelectedMarker = selectedMarker ?? markers[0] ?? null;
   const selectedPoint = selectedMarkerId ? calloutPositions[selectedMarkerId] : undefined;
   const popupPosition = useMemo(() => {
     if (!selectedMarker || !selectedPoint) {
@@ -321,7 +332,98 @@ export function MandateMap({
 
   return (
     <div className={cn("space-y-6", className)}>
-      <Card className="overflow-hidden p-0">
+      <Card className="overflow-hidden p-0 lg:hidden">
+        <div className="border-b border-[var(--color-border)] px-5 py-4">
+          <div className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--color-gold)]">
+            {locale === "ru" ? "Карта распределения" : locale === "en" ? "Distribution map" : "Բաշխման քարտեզ"}
+          </div>
+          <div className="mt-2 text-lg font-semibold text-[var(--color-graphite)]">
+            {locale === "ru"
+              ? "Выберите регион ниже"
+              : locale === "en"
+                ? "Choose a region below"
+                : "Ընտրեք տարածաշրջանը"}
+          </div>
+        </div>
+
+        <div className="relative overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#f6faf7_100%)] p-4">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(183,138,55,0.10),transparent_28%),radial-gradient(circle_at_20%_90%,rgba(23,107,77,0.08),transparent_30%)]" />
+          <div className="relative z-10 overflow-hidden rounded-[24px] border border-[var(--color-border)] bg-white/72">
+            <svg viewBox={`0 0 ${MAP_WIDTH} ${MAP_HEIGHT}`} className="h-auto w-full" aria-hidden="true">
+              <path d={graticulePath} fill="none" stroke="rgba(31,41,55,0.06)" strokeWidth="1" />
+              <path
+                d={landPath}
+                fill="rgba(215,221,226,0.66)"
+                stroke="rgba(148,163,184,0.36)"
+                strokeWidth="1"
+              />
+              {markers.map((marker) => {
+                const point = projectMarker(marker.coords);
+                if (!point) {
+                  return null;
+                }
+
+                const active = mobileSelectedMarker?.id === marker.id;
+
+                return (
+                  <g key={`mobile-map-${marker.id}`}>
+                    {active ? (
+                      <circle
+                        cx={point.x}
+                        cy={point.y}
+                        r="18"
+                        fill="rgba(142,106,42,0.14)"
+                      />
+                    ) : null}
+                    <circle
+                      cx={point.x}
+                      cy={point.y}
+                      r={active ? 8 : 6}
+                      fill={active ? "rgba(142,106,42,0.96)" : "var(--color-green)"}
+                      stroke="#ffffff"
+                      strokeWidth="4"
+                    />
+                  </g>
+                );
+              })}
+            </svg>
+          </div>
+
+          <div className="relative z-10 mt-4 grid gap-2">
+            {markers.map((marker) => {
+              const active = mobileSelectedMarker?.id === marker.id;
+
+              return (
+                <button
+                  key={`mobile-button-${marker.id}`}
+                  type="button"
+                  onClick={() => setSelectedMarkerId(marker.id)}
+                  className={cn(
+                    "flex items-center justify-between rounded-2xl border px-4 py-3 text-left transition",
+                    active
+                      ? "border-[rgba(142,106,42,0.24)] bg-[rgba(255,255,255,0.92)] shadow-[0_12px_28px_rgba(15,23,42,0.08)]"
+                      : "border-[var(--color-border)] bg-white/76",
+                  )}
+                >
+                  <div className="min-w-0 pr-4">
+                    <div className="text-sm font-semibold text-[var(--color-graphite)]">
+                      {marker.title}
+                    </div>
+                    <div className="mt-1 text-[11px] uppercase tracking-[0.18em] text-[var(--color-graphite-soft)]">
+                      {locale === "ru" ? "Мандаты" : locale === "en" ? "Mandates" : "Մանդատներ"}
+                    </div>
+                  </div>
+                  <div className="text-lg font-semibold text-[var(--color-gold)]">
+                    {marker.seatsTotal}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </Card>
+
+      <Card className="hidden overflow-hidden p-0 lg:block">
         <div className="border-b border-[var(--color-border)] px-5 py-4">
           <div className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--color-gold)]">
             {locale === "ru" ? "Карта распределения" : locale === "en" ? "Distribution map" : "Բաշխման քարտեզ"}
