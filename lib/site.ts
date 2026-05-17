@@ -4,6 +4,7 @@ export const SITE_NAME = "United Armenian Senate";
 export const SITE_NAME_RU = "Всеармянский Сенат";
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://unitedarmeniansenate.org";
+export const SITE_BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export const routeKeys = [
   "home",
@@ -28,4 +29,12 @@ export function getLocalizedPath(locale: Locale, route: RouteKey) {
 
 export function getCanonicalUrl(locale: Locale, route: RouteKey) {
   return `${SITE_URL}${getLocalizedPath(locale, route)}`;
+}
+
+export function withBasePath(path: string) {
+  if (!path.startsWith("/")) {
+    return `${SITE_BASE_PATH}/${path}`;
+  }
+
+  return `${SITE_BASE_PATH}${path}`;
 }

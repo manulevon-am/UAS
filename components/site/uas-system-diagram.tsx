@@ -24,6 +24,7 @@ import {
 import { Card } from "@/components/ui/card";
 import { homePageContent } from "@/data/site-content";
 import type { Locale } from "@/lib/i18n";
+import { withBasePath } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 type DiagramPoint = {
@@ -440,7 +441,7 @@ export function UasSystemDiagram({ locale }: { locale: Locale }) {
             <div className="pointer-events-none absolute inset-[-28px] -z-10 bg-[radial-gradient(circle,rgba(183,138,55,0.12),transparent_62%)] blur-2xl" />
             <div className="flex w-[190px] flex-col items-center rounded-[32px] border border-[rgba(142,106,42,0.16)] bg-white/88 px-6 py-6 text-center shadow-[0_26px_60px_rgba(15,23,42,0.12)] backdrop-blur-md">
               <Image
-                src="/uas.avif"
+                src={withBasePath("/uas.avif")}
                 alt="United Armenian Senate"
                 width={58}
                 height={58}
@@ -498,7 +499,7 @@ export function UasSystemDiagram({ locale }: { locale: Locale }) {
           <Card className="rounded-[30px] border-[rgba(142,106,42,0.16)] bg-white/90 px-5 py-5 shadow-[0_18px_40px_rgba(15,23,42,0.08)] backdrop-blur-sm">
             <div className="flex items-center gap-4">
               <Image
-                src="/uas.avif"
+                src={withBasePath("/uas.avif")}
                 alt="United Armenian Senate"
                 width={44}
                 height={44}

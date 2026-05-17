@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Noto_Sans_Armenian } from "next/font/google";
 import "./globals.css";
 
-import { SITE_NAME, SITE_URL } from "@/lib/site";
+import { SITE_NAME, SITE_URL, withBasePath } from "@/lib/site";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -40,9 +40,9 @@ export const metadata: Metadata = {
     type: "website",
   },
   icons: {
-    icon: "/uas.avif",
-    shortcut: "/uas.avif",
-    apple: "/uas.avif",
+    icon: withBasePath("/uas.avif"),
+    shortcut: withBasePath("/uas.avif"),
+    apple: withBasePath("/uas.avif"),
   },
   appleWebApp: {
     capable: true,

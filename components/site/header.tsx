@@ -6,7 +6,7 @@ import { LocaleSwitcher } from "@/components/site/locale-switcher";
 import { MobileNav } from "@/components/site/mobile-nav";
 import { NavLink } from "@/components/site/nav-link";
 import type { Locale } from "@/lib/i18n";
-import { getLocalizedPath, type RouteKey } from "@/lib/site";
+import { getLocalizedPath, type RouteKey, withBasePath } from "@/lib/site";
 
 export function Header({
   locale,
@@ -23,7 +23,7 @@ export function Header({
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-4 sm:px-6 lg:px-8">
         <Link href={getLocalizedPath(locale, "home")} className="flex shrink-0 items-center gap-3">
           <Image
-            src="/uas.avif"
+            src={withBasePath("/uas.avif")}
             alt="United Armenian Senate"
             width={48}
             height={48}
