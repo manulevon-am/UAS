@@ -4,6 +4,8 @@ import { institutionBlocks, mandateRegions } from "@/data/site-content";
 import { locales } from "@/lib/i18n";
 import { routeKeys, routePaths, SITE_URL } from "@/lib/site";
 
+export const dynamic = "force-static";
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 

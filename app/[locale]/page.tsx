@@ -79,7 +79,7 @@ export default async function HomePage({
 
       <div className="mx-auto max-w-7xl space-y-16 px-4 py-14 sm:px-6 lg:px-8 lg:py-18">
         <AnimatedSection>
-          <SectionHeading title={homePageContent.aboutTitle[locale]} />
+          <SectionHeading title={homePageContent.aboutTitle[locale]} align="center" />
           <div className="mt-6">
             <UasSystemDiagram locale={locale} />
           </div>

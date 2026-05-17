@@ -39,6 +39,11 @@ export const metadata: Metadata = {
     url: SITE_URL,
     type: "website",
   },
+  icons: {
+    icon: "/uas.avif",
+    shortcut: "/uas.avif",
+    apple: "/uas.avif",
+  },
   appleWebApp: {
     capable: true,
     title: SITE_NAME,
