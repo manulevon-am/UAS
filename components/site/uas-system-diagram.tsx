@@ -35,10 +35,10 @@ type DiagramPoint = {
 type DiagramLayout = {
   width: number;
   height: number;
-  leftHub: DiagramPoint;
-  rightHub: DiagramPoint;
-  leftPoints: DiagramPoint[];
-  rightPoints: DiagramPoint[];
+  topHub: DiagramPoint;
+  bottomHub: DiagramPoint;
+  topPoints: DiagramPoint[];
+  bottomPoints: DiagramPoint[];
 };
 
 type DiagramCardItem = {
@@ -147,10 +147,10 @@ const diagramText = {
   },
 } as const;
 
-const leftStroke = "rgba(142,106,42,0.58)";
-const rightStroke = "rgba(23,107,77,0.58)";
-const leftStrokeMuted = "rgba(142,106,42,0.24)";
-const rightStrokeMuted = "rgba(23,107,77,0.24)";
+const topStroke = "rgba(142,106,42,0.58)";
+const bottomStroke = "rgba(23,107,77,0.58)";
+const topStrokeMuted = "rgba(142,106,42,0.24)";
+const bottomStrokeMuted = "rgba(23,107,77,0.24)";
 
 export function UasSystemDiagram({ locale }: { locale: Locale }) {
   const reduceMotion = useReducedMotion();
@@ -159,8 +159,8 @@ export function UasSystemDiagram({ locale }: { locale: Locale }) {
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const centerRef = useRef<HTMLDivElement | null>(null);
-  const leftCardRefs = useRef<Array<HTMLDivElement | null>>([]);
-  const rightCardRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const topCardRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const bottomCardRefs = useRef<Array<HTMLDivElement | null>>([]);
 
   const governance = governanceItems[locale];
   const tasks = homePageContent.tasks.map((task, index) => ({
@@ -171,7 +171,7 @@ export function UasSystemDiagram({ locale }: { locale: Locale }) {
   }));
   const copy = diagramText[locale];
 
-  const leftItems = useMemo<DiagramCardItem[]>(
+  const topItems = useMemo<DiagramCardItem[]>(
     () =>
       governance.map((item) => ({
         id: item.id,
@@ -182,7 +182,7 @@ export function UasSystemDiagram({ locale }: { locale: Locale }) {
     [governance],
   );
 
-  const rightItems = useMemo<DiagramCardItem[]>(
+  const bottomItems = useMemo<DiagramCardItem[]>(
     () =>
       tasks.map((item) => ({
         id: item.id,
@@ -204,28 +204,28 @@ export function UasSystemDiagram({ locale }: { locale: Locale }) {
       const containerRect = container.getBoundingClientRect();
       const centerRect = center.getBoundingClientRect();
 
-      const leftPoints = leftCardRefs.current
+      const topPoints = topCardRefs.current
         .map((node) => {
           if (!node) {
             return null;
           }
           const rect = node.getBoundingClientRect();
           return {
-            x: rect.right - containerRect.left,
-            y: rect.top - containerRect.top + rect.height / 2,
+            x: rect.left - containerRect.left + rect.width / 2,
+            y: rect.bottom - containerRect.top,
           };
         })
         .filter(Boolean) as DiagramPoint[];
 
-      const rightPoints = rightCardRefs.current
+      const bottomPoints = bottomCardRefs.current
         .map((node) => {
           if (!node) {
             return null;
           }
           const rect = node.getBoundingClientRect();
           return {
-            x: rect.left - containerRect.left,
-            y: rect.top - containerRect.top + rect.height / 2,
+            x: rect.left - containerRect.left + rect.width / 2,
+            y: rect.top - containerRect.top,
           };
         })
         .filter(Boolean) as DiagramPoint[];
@@ -233,16 +233,16 @@ export function UasSystemDiagram({ locale }: { locale: Locale }) {
       setLayout({
         width: containerRect.width,
         height: containerRect.height,
-        leftHub: {
-          x: centerRect.left - containerRect.left - 16,
-          y: centerRect.top - containerRect.top + centerRect.height / 2,
+        topHub: {
+          x: centerRect.left - containerRect.left + centerRect.width / 2,
+          y: centerRect.top - containerRect.top - 16,
         },
-        rightHub: {
-          x: centerRect.right - containerRect.left + 16,
-          y: centerRect.top - containerRect.top + centerRect.height / 2,
+        bottomHub: {
+          x: centerRect.left - containerRect.left + centerRect.width / 2,
+          y: centerRect.bottom - containerRect.top + 16,
         },
-        leftPoints,
-        rightPoints,
+        topPoints,
+        bottomPoints,
       });
     };
 
@@ -264,12 +264,12 @@ export function UasSystemDiagram({ locale }: { locale: Locale }) {
     if (centerRef.current) {
       observer.observe(centerRef.current);
     }
-    leftCardRefs.current.forEach((node) => {
+    topCardRefs.current.forEach((node) => {
       if (node) {
         observer.observe(node);
       }
     });
-    rightCardRefs.current.forEach((node) => {
+    bottomCardRefs.current.forEach((node) => {
       if (node) {
         observer.observe(node);
       }
@@ -282,7 +282,7 @@ export function UasSystemDiagram({ locale }: { locale: Locale }) {
       observer.disconnect();
       window.removeEventListener("resize", scheduleMeasure);
     };
-  }, [locale, leftItems.length, rightItems.length]);
+  }, [locale, topItems.length, bottomItems.length]);
 
   return (
     <div className="relative overflow-hidden rounded-[36px] border border-[rgba(15,23,42,0.08)] bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(246,249,247,0.96))] px-5 py-5 shadow-[0_24px_64px_rgba(15,23,42,0.06)] sm:px-7 sm:py-7 lg:px-8 lg:py-8">
@@ -299,7 +299,7 @@ export function UasSystemDiagram({ locale }: { locale: Locale }) {
         />
       </div>
 
-      <div ref={containerRef} className="relative hidden lg:grid lg:grid-cols-[minmax(0,1fr)_260px_minmax(0,1fr)] lg:items-center lg:gap-12 xl:gap-16">
+      <div ref={containerRef} className="relative hidden lg:flex lg:flex-col lg:items-center lg:gap-11">
         {layout ? (
           <motion.svg
             className="pointer-events-none absolute inset-0 z-0 h-full w-full overflow-visible"
@@ -307,18 +307,18 @@ export function UasSystemDiagram({ locale }: { locale: Locale }) {
             preserveAspectRatio="none"
             aria-hidden="true"
           >
-            {leftItems.map((item, index) => {
-              const point = layout.leftPoints[index];
+            {topItems.map((item, index) => {
+              const point = layout.topPoints[index];
               if (!point) {
                 return null;
               }
 
               return (
                 <motion.path
-                  key={`left-path-${item.id}`}
-                  d={buildCurvePath(point, layout.leftHub, "left")}
+                  key={`top-path-${item.id}`}
+                  d={buildCurvePath(point, layout.topHub, "top")}
                   fill="none"
-                  stroke={hoveredId === item.id ? leftStroke : leftStrokeMuted}
+                  stroke={hoveredId === item.id ? topStroke : topStrokeMuted}
                   strokeWidth={hoveredId === item.id ? 2.2 : 1.5}
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -342,18 +342,18 @@ export function UasSystemDiagram({ locale }: { locale: Locale }) {
               );
             })}
 
-            {rightItems.map((item, index) => {
-              const point = layout.rightPoints[index];
+            {bottomItems.map((item, index) => {
+              const point = layout.bottomPoints[index];
               if (!point) {
                 return null;
               }
 
               return (
                 <motion.path
-                  key={`right-path-${item.id}`}
-                  d={buildCurvePath(point, layout.rightHub, "right")}
+                  key={`bottom-path-${item.id}`}
+                  d={buildCurvePath(point, layout.bottomHub, "bottom")}
                   fill="none"
-                  stroke={hoveredId === item.id ? rightStroke : rightStrokeMuted}
+                  stroke={hoveredId === item.id ? bottomStroke : bottomStrokeMuted}
                   strokeWidth={hoveredId === item.id ? 2.2 : 1.5}
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -382,49 +382,51 @@ export function UasSystemDiagram({ locale }: { locale: Locale }) {
         {layout ? (
           <>
             <HubNode
-              x={layout.leftHub.x}
-              y={layout.leftHub.y}
-              tone="left"
+              x={layout.topHub.x}
+              y={layout.topHub.y}
+              tone="top"
             />
             <HubNode
-              x={layout.rightHub.x}
-              y={layout.rightHub.y}
-              tone="right"
+              x={layout.bottomHub.x}
+              y={layout.bottomHub.y}
+              tone="bottom"
             />
           </>
         ) : null}
 
-        <div className="relative z-10 flex flex-col gap-5 py-4">
-          <div className="mb-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--color-gold)]">
+        <div className="relative z-10 w-full">
+          <div className="mb-4 text-center text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--color-gold)]">
             {copy.organizationLabel}
           </div>
-          {leftItems.map((item, index) => (
-            <NetworkCard
-              key={item.id}
-              ref={(node) => {
-                leftCardRefs.current[index] = node;
-              }}
-              side="left"
-              accent={index < 2}
-              isActive={hoveredId === item.id}
-              onMouseEnter={() => setHoveredId(item.id)}
-              onMouseLeave={() => setHoveredId(null)}
-              onFocus={() => setHoveredId(item.id)}
-              onBlur={() => setHoveredId(null)}
-            >
-              <div className="flex items-start gap-3">
-                <item.icon className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-gold)]" />
-                <div className="min-w-0">
-                  <div className="text-base font-semibold text-[var(--color-graphite)]">
-                    {item.title}
+          <div className="grid grid-cols-4 gap-5">
+            {topItems.map((item, index) => (
+              <NetworkCard
+                key={item.id}
+                ref={(node) => {
+                  topCardRefs.current[index] = node;
+                }}
+                side="top"
+                accent={index < 2}
+                isActive={hoveredId === item.id}
+                onMouseEnter={() => setHoveredId(item.id)}
+                onMouseLeave={() => setHoveredId(null)}
+                onFocus={() => setHoveredId(item.id)}
+                onBlur={() => setHoveredId(null)}
+              >
+                <div className="flex items-start gap-3">
+                  <item.icon className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-gold)]" />
+                  <div className="min-w-0">
+                    <div className="text-base font-semibold text-[var(--color-graphite)]">
+                      {item.title}
+                    </div>
+                    <p className="mt-1.5 text-sm leading-6 text-[var(--color-graphite-soft)]">
+                      {item.description}
+                    </p>
                   </div>
-                  <p className="mt-1.5 text-sm leading-6 text-[var(--color-graphite-soft)]">
-                    {item.description}
-                  </p>
                 </div>
-              </div>
-            </NetworkCard>
-          ))}
+              </NetworkCard>
+            ))}
+          </div>
         </div>
 
         <div className="relative z-20 flex items-center justify-center">
@@ -453,26 +455,51 @@ export function UasSystemDiagram({ locale }: { locale: Locale }) {
           </motion.div>
         </div>
 
-        <div className="relative z-10 flex flex-col gap-5 py-4">
-          <div className="mb-1 text-right text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--color-green)]">
+        <div className="relative z-10 w-full">
+          <div className="mb-4 text-center text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--color-green)]">
             {copy.missionLabel}
           </div>
-          {rightItems.map((item, index) => (
-            <NetworkCard
-              key={item.id}
-              ref={(node) => {
-                rightCardRefs.current[index] = node;
-              }}
-              side="right"
-              accent={index < 2}
-              isActive={hoveredId === item.id}
-              onMouseEnter={() => setHoveredId(item.id)}
-              onMouseLeave={() => setHoveredId(null)}
-              onFocus={() => setHoveredId(item.id)}
-              onBlur={() => setHoveredId(null)}
-            >
+          <div className="grid grid-cols-4 gap-5">
+            {bottomItems.map((item, index) => (
+              <NetworkCard
+                key={item.id}
+                ref={(node) => {
+                  bottomCardRefs.current[index] = node;
+                }}
+                side="bottom"
+                accent={index < 2}
+                isActive={hoveredId === item.id}
+                onMouseEnter={() => setHoveredId(item.id)}
+                onMouseLeave={() => setHoveredId(null)}
+                onFocus={() => setHoveredId(item.id)}
+                onBlur={() => setHoveredId(null)}
+              >
+                <div className="flex items-start gap-3">
+                  <item.icon className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-green)]" />
+                  <div className="min-w-0">
+                    <div className="text-base font-semibold text-[var(--color-graphite)]">
+                      {item.title}
+                    </div>
+                    <p className="mt-1.5 text-sm leading-6 text-[var(--color-graphite-soft)]">
+                      {item.description}
+                    </p>
+                  </div>
+                </div>
+              </NetworkCard>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="relative z-10 grid gap-4 lg:hidden">
+        <div className="grid gap-3">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--color-gold)]">
+            {copy.organizationLabel}
+          </div>
+          {topItems.map((item, index) => (
+            <MobileNetworkCard key={item.id} tone="top" delay={index * 0.05}>
               <div className="flex items-start gap-3">
-                <item.icon className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-green)]" />
+                <item.icon className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-gold)]" />
                 <div className="min-w-0">
                   <div className="text-base font-semibold text-[var(--color-graphite)]">
                     {item.title}
@@ -482,12 +509,10 @@ export function UasSystemDiagram({ locale }: { locale: Locale }) {
                   </p>
                 </div>
               </div>
-            </NetworkCard>
+            </MobileNetworkCard>
           ))}
         </div>
-      </div>
 
-      <div className="relative z-10 grid gap-4 lg:hidden">
         <motion.div
           initial={reduceMotion ? undefined : { opacity: 0, y: 16 }}
           whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
@@ -512,32 +537,11 @@ export function UasSystemDiagram({ locale }: { locale: Locale }) {
         </motion.div>
 
         <div className="grid gap-3">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--color-gold)]">
-            {copy.organizationLabel}
-          </div>
-          {leftItems.map((item, index) => (
-            <MobileNetworkCard key={item.id} tone="left" delay={index * 0.05}>
-              <div className="flex items-start gap-3">
-                <item.icon className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-gold)]" />
-                <div className="min-w-0">
-                  <div className="text-base font-semibold text-[var(--color-graphite)]">
-                    {item.title}
-                  </div>
-                  <p className="mt-1.5 text-sm leading-6 text-[var(--color-graphite-soft)]">
-                    {item.description}
-                  </p>
-                </div>
-              </div>
-            </MobileNetworkCard>
-          ))}
-        </div>
-
-        <div className="grid gap-3">
           <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--color-green)]">
             {copy.missionLabel}
           </div>
-          {rightItems.map((item, index) => (
-            <MobileNetworkCard key={item.id} tone="right" delay={index * 0.05}>
+          {bottomItems.map((item, index) => (
+            <MobileNetworkCard key={item.id} tone="bottom" delay={index * 0.05}>
               <div className="flex items-start gap-3">
                 <item.icon className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-green)]" />
                 <div className="min-w-0">
@@ -562,7 +566,7 @@ const NetworkCard = forwardRef<
   {
     className?: string;
     children: ReactNode;
-    side: "left" | "right";
+    side: "top" | "bottom";
     accent?: boolean;
     isActive?: boolean;
     onMouseEnter?: MouseEventHandler<HTMLDivElement>;
@@ -591,7 +595,7 @@ const NetworkCard = forwardRef<
       transition={{ duration: 0.22, ease: "easeOut" }}
       className={cn(
         "relative",
-        side === "left" ? "pr-5" : "pl-5",
+        side === "top" ? "pb-5" : "pt-5",
         className,
       )}
       onMouseEnter={onMouseEnter}
@@ -601,12 +605,12 @@ const NetworkCard = forwardRef<
     >
       <div
         className={cn(
-          "absolute top-1/2 h-3.5 w-3.5 -translate-y-1/2 rounded-full border border-white/90 shadow-[0_0_0_6px_rgba(255,255,255,0.72)]",
-          side === "left"
-            ? "right-[-2px] bg-[var(--color-gold)]"
-            : "left-[-2px] bg-[var(--color-green)]",
+          "absolute left-1/2 h-3.5 w-3.5 -translate-x-1/2 rounded-full border border-white/90 shadow-[0_0_0_6px_rgba(255,255,255,0.72)]",
+          side === "top"
+            ? "bottom-[-2px] bg-[var(--color-gold)]"
+            : "top-[-2px] bg-[var(--color-green)]",
           isActive
-            ? side === "left"
+            ? side === "top"
               ? "shadow-[0_0_0_10px_rgba(183,138,55,0.16)]"
               : "shadow-[0_0_0_10px_rgba(23,107,77,0.14)]"
             : undefined,
@@ -631,7 +635,7 @@ function MobileNetworkCard({
   delay,
 }: {
   children: ReactNode;
-  tone: "left" | "right";
+  tone: "top" | "bottom";
   delay: number;
 }) {
   const reduceMotion = useReducedMotion();
@@ -647,13 +651,13 @@ function MobileNetworkCard({
       <div
         className={cn(
           "absolute left-0 top-0 h-full w-px",
-          tone === "left" ? "bg-[rgba(142,106,42,0.26)]" : "bg-[rgba(23,107,77,0.24)]",
+          tone === "top" ? "bg-[rgba(142,106,42,0.26)]" : "bg-[rgba(23,107,77,0.24)]",
         )}
       />
       <div
         className={cn(
           "absolute left-[-5px] top-7 h-3 w-3 rounded-full border border-white",
-          tone === "left" ? "bg-[var(--color-gold)]" : "bg-[var(--color-green)]",
+          tone === "top" ? "bg-[var(--color-gold)]" : "bg-[var(--color-green)]",
         )}
       />
       <Card className="rounded-[28px] border-[rgba(15,23,42,0.08)] bg-white/86 px-5 py-4 shadow-[0_14px_34px_rgba(15,23,42,0.06)] backdrop-blur-sm">
@@ -670,7 +674,7 @@ function HubNode({
 }: {
   x: number;
   y: number;
-  tone: "left" | "right";
+  tone: "top" | "bottom";
 }) {
   return (
     <div
@@ -680,20 +684,20 @@ function HubNode({
       <div
         className={cn(
           "h-3.5 w-3.5 rounded-full border border-white/90 shadow-[0_0_0_6px_rgba(255,255,255,0.72)]",
-          tone === "left" ? "bg-[var(--color-gold)]" : "bg-[var(--color-green)]",
+          tone === "top" ? "bg-[var(--color-gold)]" : "bg-[var(--color-green)]",
         )}
       />
     </div>
   );
 }
 
-function buildCurvePath(start: DiagramPoint, end: DiagramPoint, side: "left" | "right") {
-  const distance = Math.abs(end.x - start.x);
-  const handle = Math.max(36, distance * 0.38);
+function buildCurvePath(start: DiagramPoint, end: DiagramPoint, side: "top" | "bottom") {
+  const distance = Math.abs(end.y - start.y);
+  const handle = Math.max(36, distance * 0.42);
 
-  if (side === "left") {
-    return `M ${start.x} ${start.y} C ${start.x + handle} ${start.y}, ${end.x - handle} ${end.y}, ${end.x} ${end.y}`;
+  if (side === "top") {
+    return `M ${start.x} ${start.y} C ${start.x} ${start.y + handle}, ${end.x} ${end.y - handle}, ${end.x} ${end.y}`;
   }
 
-  return `M ${start.x} ${start.y} C ${start.x - handle} ${start.y}, ${end.x + handle} ${end.y}, ${end.x} ${end.y}`;
+  return `M ${start.x} ${start.y} C ${start.x} ${start.y - handle}, ${end.x} ${end.y + handle}, ${end.x} ${end.y}`;
 }
