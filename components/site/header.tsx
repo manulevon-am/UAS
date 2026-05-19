@@ -31,12 +31,12 @@ export function Header({
             priority
           />
           <div className="min-w-0">
-            <div className="truncate text-sm font-extrabold tracking-[0.05em] text-[var(--color-graphite)] max-[389px]:hidden sm:text-base">
+            <div className="truncate text-base font-extrabold uppercase tracking-[0.05em] text-[var(--color-graphite)] max-[389px]:hidden sm:text-lg">
               {locale === "ru"
                 ? "ВСЕАРМЯНСКИЙ СЕНАТ"
                 : locale === "hy"
-                  ? "Համահայկական Սենատ"
-                  : "United Armenian Senate"}
+                  ? "ՀԱՄԱՀԱՅԿԱԿԱՆ ՍԵՆԱՏ"
+                  : "UNITED ARMENIAN SENATE"}
             </div>
             <div className="text-sm font-extrabold tracking-[0.08em] text-[var(--color-graphite)] min-[390px]:hidden">
               UAS
