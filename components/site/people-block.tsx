@@ -17,30 +17,32 @@ function PersonCardView({
     .slice(0, 2);
 
   return (
-    <Card className="grid gap-5 md:grid-cols-[88px_1fr]">
-      {person.photo ? (
-        <Image
-          src={person.photo}
-          alt={person.name}
-          width={88}
-          height={88}
-          className="h-[88px] w-[88px] rounded-[22px] object-cover"
-          unoptimized
-        />
-      ) : (
-        <div className="flex h-[88px] w-[88px] items-center justify-center rounded-[22px] bg-[var(--color-green-soft)] text-xl font-semibold text-[var(--color-green)]">
-          {initials}
-        </div>
-      )}
-      <div>
+    <Card className="overflow-hidden p-0">
+      <div className="relative aspect-[4/5] bg-[var(--color-green-soft)]">
+        {person.photo ? (
+          <Image
+            src={person.photo}
+            alt={person.name}
+            fill
+            sizes="(min-width: 1280px) 25vw, (min-width: 768px) 33vw, 50vw"
+            className="object-cover"
+            unoptimized
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-4xl font-semibold text-[var(--color-green)]">
+            {initials}
+          </div>
+        )}
+      </div>
+      <div className="p-5">
         <h3 className="text-lg font-semibold text-[var(--color-graphite)]">
           {person.name}
         </h3>
-        <div className="mt-2 text-sm text-[var(--color-gold)]">{person.role}</div>
-        <div className="mt-3 text-sm text-[var(--color-graphite-soft)]">
+        <div className="mt-2 text-sm font-medium text-[var(--color-gold)]">{person.role}</div>
+        <div className="mt-3 text-sm leading-6 text-[var(--color-graphite-soft)]">
           {person.country}, {person.city}
         </div>
-        <p className="mt-4 text-sm leading-7 text-[var(--color-graphite-soft)]">
+        <p className="mt-4 text-sm leading-6 text-[var(--color-graphite-soft)]">
           {person.bio}
         </p>
         {person.status === "candidate" ? (
@@ -85,7 +87,7 @@ export function PeopleBlock({
           {emptyText}
         </Card>
       ) : (
-        <div className="grid gap-4">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {people.map((person) => (
             <PersonCardView key={person.id} person={person} />
           ))}
