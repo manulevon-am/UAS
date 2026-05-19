@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -17,9 +18,20 @@ function PersonCardView({
 
   return (
     <Card className="grid gap-5 md:grid-cols-[88px_1fr]">
-      <div className="flex h-[88px] w-[88px] items-center justify-center rounded-[22px] bg-[var(--color-green-soft)] text-xl font-semibold text-[var(--color-green)]">
-        {initials}
-      </div>
+      {person.photo ? (
+        <Image
+          src={person.photo}
+          alt={person.name}
+          width={88}
+          height={88}
+          className="h-[88px] w-[88px] rounded-[22px] object-cover"
+          unoptimized
+        />
+      ) : (
+        <div className="flex h-[88px] w-[88px] items-center justify-center rounded-[22px] bg-[var(--color-green-soft)] text-xl font-semibold text-[var(--color-green)]">
+          {initials}
+        </div>
+      )}
       <div>
         <h3 className="text-lg font-semibold text-[var(--color-graphite)]">
           {person.name}

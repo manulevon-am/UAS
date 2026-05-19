@@ -1,6 +1,10 @@
 import type { MetadataRoute } from "next";
 
-import { institutionBlocks, mandateRegions } from "@/data/site-content";
+import {
+  institutionBlocks,
+  mandateDistributionSections,
+  mandateRegions,
+} from "@/data/site-content";
 import { locales } from "@/lib/i18n";
 import { routeKeys, routePaths, SITE_URL } from "@/lib/site";
 
@@ -42,6 +46,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...locales.flatMap((locale) =>
       institutionBlocks.map((block) => ({
         url: `${SITE_URL}/${locale}/institutions/${block.id}`,
+        lastModified: now,
+        changeFrequency: "weekly" as const,
+        priority: 0.65,
+      })),
+    ),
+    ...locales.flatMap((locale) =>
+      mandateDistributionSections.map((section) => ({
+        url: `${SITE_URL}/${locale}/distribution/${section.id}`,
         lastModified: now,
         changeFrequency: "weekly" as const,
         priority: 0.65,

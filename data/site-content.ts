@@ -8,7 +8,7 @@ type RouteContent = {
   description: string;
 };
 
-export type StaticRoute = "home" | "structure" | "documents" | "join";
+export type StaticRoute = "home" | "structure" | "documents" | "news" | "join";
 
 export type MandateBlock = {
   id: string;
@@ -59,6 +59,7 @@ export type PersonCard = {
   name: string;
   regionId?: string;
   institutionId?: string;
+  distributionSectionId?: string;
   country: string;
   city: string;
   status: "mandate_holder" | "candidate";
@@ -76,6 +77,7 @@ export type DocumentCard = {
   language: string;
   description: LocalizedText;
   fileUrl: string;
+  sourceUrl?: string;
 };
 
 const loc = (ru: string, en = ru, hy = ru): LocalizedText => ({ ru, en, hy });
@@ -95,7 +97,12 @@ export const routeMeta: Record<Locale, Record<StaticRoute, RouteContent>> = {
     documents: {
       title: "Документы",
       description:
-        "Основные документы Всеармянского Сената: концепция, манифест и рабочие материалы.",
+        "Основные документы Всеармянского Сената: концепция, декларация и руководство по работе.",
+    },
+    news: {
+      title: "Новости",
+      description:
+        "Новости и объявления United Armenian Senate.",
     },
     join: {
       title: "Присоединиться",
@@ -117,7 +124,12 @@ export const routeMeta: Record<Locale, Record<StaticRoute, RouteContent>> = {
     documents: {
       title: "Documents",
       description:
-        "Core documents of the United Armenian Senate: concept, manifesto, and working materials.",
+        "Core documents of the United Armenian Senate: concept, declaration, and operating guide.",
+    },
+    news: {
+      title: "News",
+      description:
+        "News and announcements from the United Armenian Senate.",
     },
     join: {
       title: "Join",
@@ -139,7 +151,12 @@ export const routeMeta: Record<Locale, Record<StaticRoute, RouteContent>> = {
     documents: {
       title: "Փաստաթղթեր",
       description:
-        "Համահայկական Սենատի հիմնական փաստաթղթերը՝ հայեցակարգ, մանիֆեստ և աշխատանքային նյութեր։",
+        "Համահայկական Սենատի հիմնական փաստաթղթերը՝ հայեցակարգ, հռչակագիր և աշխատանքային ուղեցույց։",
+    },
+    news: {
+      title: "Նորություններ",
+      description:
+        "United Armenian Senate-ի նորություններն ու հայտարարությունները։",
     },
     join: {
       title: "Միանալ",
@@ -157,22 +174,25 @@ export const navigationLabels: Record<
     home: "Главная",
     structure: "Структура",
     documents: "Документы",
+    news: "Новости",
     join: "Присоединиться",
-    cta: "Стать сенатором",
+    cta: "Присоединиться",
   },
   en: {
     home: "Home",
     structure: "Structure",
     documents: "Documents",
+    news: "News",
     join: "Join",
-    cta: "Become a Senator",
+    cta: "Join",
   },
   hy: {
     home: "Գլխավոր",
     structure: "Կառուցվածք",
     documents: "Փաստաթղթեր",
+    news: "Նորություններ",
     join: "Միանալ",
-    cta: "Դառնալ սենատոր",
+    cta: "Միանալ",
   },
 };
 
@@ -299,7 +319,7 @@ export const mandateRegions: MandateBlock[] = [
     id: "armenia",
     title: loc("Армения"),
     seatsTotal: 120,
-    seatsOccupied: 0,
+    seatsOccupied: 1,
     candidates: 0,
     description: loc(
       "Армения, беженцы из Азербайджана, Арцах, Нахичевань, Карс, Сурмалу",
@@ -310,7 +330,7 @@ export const mandateRegions: MandateBlock[] = [
     id: "russia-cis",
     title: loc("РФ и страны СНГ"),
     seatsTotal: 110,
-    seatsOccupied: 0,
+    seatsOccupied: 15,
     candidates: 0,
     description: loc("РФ и страны СНГ"),
     marker: { x: 64, y: 24 },
@@ -319,7 +339,7 @@ export const mandateRegions: MandateBlock[] = [
     id: "usa-canada",
     title: loc("США и Канада"),
     seatsTotal: 100,
-    seatsOccupied: 0,
+    seatsOccupied: 1,
     candidates: 0,
     description: loc("США — 75 мандатов, Канада — 25 мандатов"),
     marker: { x: 18, y: 28 },
@@ -659,7 +679,7 @@ export const mandateDistributionSections: MandateDistributionSection[] = [
     index: 2,
     title: loc("США, Канада", "USA, Canada", "ԱՄՆ, Կանադա"),
     seatsTotal: 96,
-    seatsOccupied: 0,
+    seatsOccupied: 1,
     candidates: 0,
     entries: [
       { label: loc("армянские общины", "Armenian communities", "հայկական համայնքներ"), seats: loc("40 мест", "40 seats", "40 տեղ"), seatsValue: 40 },
@@ -675,7 +695,7 @@ export const mandateDistributionSections: MandateDistributionSection[] = [
     index: 3,
     title: loc("РФ", "Russia", "ՌԴ"),
     seatsTotal: 55,
-    seatsOccupied: 0,
+    seatsOccupied: 15,
     candidates: 0,
     entries: [
       { label: loc("армянские общины", "Armenian communities", "հայկական համայնքներ"), seats: loc("35 мест", "35 seats", "35 տեղ"), seatsValue: 35 },
@@ -723,7 +743,7 @@ export const mandateDistributionSections: MandateDistributionSection[] = [
     index: 7,
     title: loc("Европейские страны", "European countries", "Եվրոպական երկրներ"),
     seatsTotal: 82,
-    seatsOccupied: 0,
+    seatsOccupied: 6,
     candidates: 0,
     entries: [
       { label: loc("армянские общины", "Armenian communities", "հայկական համայնքներ"), seats: loc("50 мест", "50 seats", "50 տեղ"), seatsValue: 50 },
@@ -864,25 +884,323 @@ export const documents: DocumentCard[] = [
     id: "concept",
     title: loc("Концепция организации Всеармянского Сената"),
     category: loc("Основной документ"),
-    language: "HY",
+    language: "RU",
     description: loc(
-      "Документ описывает цель, структуру, функции, распределение мандатов и порядок формирования Сената.",
+      "Концепция Сената: цель, структура, функции, распределение мандатов и порядок формирования.",
     ),
-    fileUrl: "/documents/concept.txt",
+    fileUrl:
+      "https://westernarmenia-wixsite-com.translate.goog/senate/%D5%B0%D5%A1%D5%B5%D5%A5%D6%81%D5%A1%D5%AF%D5%A1%D6%80%D5%A3?_x_tr_sl=auto&_x_tr_tl=ru&_x_tr_hl=ru&_x_tr_hist=true",
+    sourceUrl:
+      "https://westernarmenia.wixsite.com/senate/%D5%B0%D5%A1%D5%B5%D5%A5%D6%81%D5%A1%D5%AF%D5%A1%D6%80%D5%A3",
   },
   {
-    id: "manifest",
-    title: loc("Манифест"),
-    category: loc("Программный документ"),
-    language: "HY",
+    id: "declaration-guide",
+    title: loc("Декларация. Руководство по работе Сената"),
+    category: loc("Рабочий документ"),
+    language: "RU",
     description: loc(
-      "Документ с основными рабочими направлениями и принципами Сената.",
+      "Декларация и руководство по работе Сената, опубликованные в исходных материалах.",
     ),
-    fileUrl: "/documents/manifesto.txt",
+    fileUrl:
+      "https://westernarmenia-wixsite-com.translate.goog/senate?_x_tr_sl=auto&_x_tr_tl=ru&_x_tr_hl=ru&_x_tr_hist=true",
+    sourceUrl: "https://westernarmenia.wixsite.com/senate",
   },
 ];
 
-export const regionSenators: PersonCard[] = [];
+export const regionSenators: PersonCard[] = [
+  {
+    id: "ashot-sarkisyan",
+    name: "Աշոտ Սարկիսյան",
+    regionId: "armenia",
+    country: "Հայաստան",
+    city: "Երևան",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_ef155fbafdea4e74ad46c46bcfadcba4~mv2.jpg/v1/fill/w_291,h_375,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/104352702_196084758331613_8875113999358829574_n_edited.jpg",
+    bio: "Опубликован в списке сенаторов блока Армения.",
+  },
+  {
+    id: "inesa-asryan",
+    name: "Ինեսա Ասրյան",
+    regionId: "usa-canada",
+    distributionSectionId: "usa-canada",
+    country: "ԱՄՆ / Լատինական Ամերիկա",
+    city: "—",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_8c866f73d6324321b469e4da1e8b87ad~mv2.jpg/v1/fill/w_178,h_219,al_c,lg_1,q_80,enc_avif,quality_auto/373429398_264003073188625_247395331986758058_n_edited.jpg",
+    bio: "Опубликована в списке сенаторов блока США / Латинская Америка.",
+  },
+  {
+    id: "arsen-abrahamyan",
+    name: "Արսեն Աբրահամյան",
+    regionId: "russia-cis",
+    distributionSectionId: "russia",
+    country: "ՌԴ և ԱՊՀ",
+    city: "—",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_4e03bd8306364985aa68cf17308fa53f~mv2.jpg/v1/fill/w_201,h_250,al_c,lg_1,q_80,enc_avif,quality_auto/292722245_508336167726892_21963698861800.jpg",
+    bio: "Опубликован в списке сенаторов блока РФ и стран СНГ.",
+  },
+  {
+    id: "artur-poghosyan",
+    name: "Արթուր Պողոսյան",
+    regionId: "russia-cis",
+    distributionSectionId: "russia",
+    country: "ՌԴ և ԱՊՀ",
+    city: "—",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_b35a48423d6141ef8cc9567cc48beb51~mv2.jpg/v1/fill/w_201,h_257,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/354488407_728875852323649_8250111534948152157_n_edited.jpg",
+    bio: "Опубликован в списке сенаторов блока РФ и стран СНГ.",
+  },
+  {
+    id: "lusine-hovakimyan",
+    name: "Լուսինե Հովակիմյան",
+    regionId: "russia-cis",
+    distributionSectionId: "russia",
+    country: "ՌԴ և ԱՊՀ",
+    city: "—",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_ff9498bd1da74fbfa20ccbfaf45c7e3c~mv2.jpg/v1/fill/w_201,h_272,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/59a28c7e-b632-4efe-b6a9-31ffedccc90a_edited_edited_edited.jpg",
+    bio: "Опубликована в списке сенаторов блока РФ и стран СНГ.",
+  },
+  {
+    id: "oganes-katikyan",
+    name: "Օգանես Կատիկյան",
+    regionId: "russia-cis",
+    distributionSectionId: "russia",
+    country: "ՌԴ և ԱՊՀ",
+    city: "—",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_70de2bef63f4464d9fad7ed8013d2d4a~mv2.jpg/v1/fill/w_208,h_291,al_c,lg_1,q_80,enc_avif,quality_auto/IMG-20230616-WA0000_edited.jpg",
+    bio: "Опубликован в списке сенаторов блока РФ и стран СНГ.",
+  },
+  {
+    id: "vladimir-pashayan",
+    name: "Վլադիմիր Փաշայան",
+    regionId: "russia-cis",
+    distributionSectionId: "russia",
+    country: "ՌԴ և ԱՊՀ",
+    city: "—",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_9b882ce10e27442e9b0c0408acfa100e~mv2.jpg/v1/fill/w_201,h_272,al_c,q_80,enc_avif,quality_auto/346103676_591424642786332_4162683423528836001_n_edited.jpg",
+    bio: "Опубликован в списке сенаторов блока РФ и стран СНГ.",
+  },
+  {
+    id: "luiza-iosifova",
+    name: "Լուիզա Իոսիֆովա",
+    regionId: "russia-cis",
+    distributionSectionId: "russia",
+    country: "ՌԴ և ԱՊՀ",
+    city: "—",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_c9fcac5912c8407ab04352d532949ce9~mv2.jpg/v1/fill/w_208,h_257,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/294821148_446948520627604_1989368671484391514_n_edited.jpg",
+    bio: "Опубликована в списке сенаторов блока РФ и стран СНГ.",
+  },
+  {
+    id: "armen-avagyan",
+    name: "Արմեն Ավագյան",
+    regionId: "russia-cis",
+    distributionSectionId: "russia",
+    country: "ՌԴ և ԱՊՀ",
+    city: "—",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_217b4bd92be0492d94d0d1f8af925f15~mv2.jpg/v1/fill/w_201,h_250,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/5771963a-8446-42c8-9d4b-195ba28a7beb_edited.jpg",
+    bio: "Опубликован в списке сенаторов блока РФ и стран СНГ.",
+  },
+  {
+    id: "davit-abrahamyan",
+    name: "Դավիթ Աբրահամյան",
+    regionId: "russia-cis",
+    distributionSectionId: "russia",
+    country: "ՌԴ և ԱՊՀ",
+    city: "—",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_f4495907a03347d2878cc8a06c377d0c~mv2.jpg/v1/fill/w_208,h_250,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/387518171_6712357708887454_7198709620081735399_n_edited_edited.jpg",
+    bio: "Опубликован в списке сенаторов блока РФ и стран СНГ.",
+  },
+  {
+    id: "sahak-avagyan",
+    name: "Սահակ Ավագյան",
+    regionId: "russia-cis",
+    distributionSectionId: "russia",
+    country: "ՌԴ և ԱՊՀ",
+    city: "—",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_32de490f99634cbdbacb4b3722a43def~mv2.jpg/v1/fill/w_233,h_272,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/292534834_592863545563658_8881670996754971955_n_edited.jpg",
+    bio: "Опубликован в списке сенаторов блока РФ и стран СНГ.",
+  },
+  {
+    id: "robert-abrahamyan-russia",
+    name: "Ռոբերտ Աբրահամյան",
+    regionId: "russia-cis",
+    distributionSectionId: "russia",
+    country: "ՌԴ և ԱՊՀ",
+    city: "—",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_d3295916c3094983b31b119eaed07fae~mv2.jpg/v1/fill/w_223,h_266,al_c,lg_1,q_80,enc_avif,quality_auto/373416727_1013799816711012_4773968636419086474_n_edited.jpg",
+    bio: "Опубликован в списке сенаторов блока РФ и стран СНГ.",
+  },
+  {
+    id: "garik-ghazaryan",
+    name: "Գարիկ Ղազարյան",
+    regionId: "russia-cis",
+    distributionSectionId: "russia",
+    country: "ՌԴ և ԱՊՀ",
+    city: "—",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_8786161b0a7a4bf6bafa71505ca95f9e~mv2.jpg/v1/crop/x_3,y_40,w_266,h_344/fill/w_208,h_269,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/344715399_942911610248699_40845791885057.jpg",
+    bio: "Опубликован в списке сенаторов блока РФ и стран СНГ.",
+  },
+  {
+    id: "hamlet-tatoyan",
+    name: "Համլետ Թաթոյան",
+    regionId: "russia-cis",
+    distributionSectionId: "russia",
+    country: "ՌԴ և ԱՊՀ",
+    city: "—",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_f60f2fe934034512ac9f4cb238335bec~mv2.jpg/v1/fill/w_193,h_226,al_c,lg_1,q_80,enc_avif,quality_auto/372314546_686875743319574_63640034478766.jpg",
+    bio: "Опубликован в списке сенаторов блока РФ и стран СНГ.",
+  },
+  {
+    id: "smbat-hakobyan",
+    name: "Սմբատ Հակոբյան",
+    regionId: "russia-cis",
+    distributionSectionId: "russia",
+    country: "ՌԴ և ԱՊՀ",
+    city: "—",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_0bf1c532f5504a0b9e8d5d54d340f082~mv2.jpg/v1/fill/w_215,h_279,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/014-1_edited.jpg",
+    bio: "Опубликован в списке сенаторов блока РФ и стран СНГ.",
+  },
+  {
+    id: "artur-ayvazyan",
+    name: "Արթուր Այվազյան",
+    regionId: "russia-cis",
+    distributionSectionId: "russia",
+    country: "ՌԴ և ԱՊՀ",
+    city: "—",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_60abc6f03008456a81958436eebefeed~mv2.jpg/v1/crop/x_4,y_20,w_185,h_226/fill/w_233,h_284,al_c,lg_1,q_80,enc_avif,quality_auto/372908819_1325229595056099_1994672331029574826_n_edited.jpg",
+    bio: "Опубликован в списке сенаторов блока РФ и стран СНГ.",
+  },
+  {
+    id: "ghukas-manukyan-russia",
+    name: "Ղուկաս Մանուկյան",
+    regionId: "russia-cis",
+    distributionSectionId: "russia",
+    country: "ՌԴ և ԱՊՀ",
+    city: "—",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_b0b919ac1f294f6fb66b206def4c47df~mv2.jpg/v1/fill/w_208,h_257,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/355854081_1192897042105237_5971321152800836845_n_edited.jpg",
+    bio: "Опубликован в списке сенаторов блока РФ и стран СНГ.",
+  },
+  {
+    id: "avetis-sadoyan",
+    name: "Պրոֆ․ Ավետիս Սադոյան",
+    distributionSectionId: "europe",
+    country: "Եվրոպա",
+    city: "—",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_fe7088e9823246f7b1e790f490801bc2~mv2.jpg/v1/fill/w_292,h_292,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/460961613_10234978697991892_8185912569949107483_n.jpg",
+    bio: "Опубликован в списке сенаторов блока Европа.",
+  },
+  {
+    id: "tigran-mikaelyan",
+    name: "Տիգրան Միքաելյան",
+    distributionSectionId: "europe",
+    country: "Եվրոպա",
+    city: "—",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_14837408cbca4a80aad6a3724255e072~mv2.jpg/v1/fill/w_194,h_292,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/460646920_10230333783361378_283805555592.jpg",
+    bio: "Опубликован в списке сенаторов блока Европа.",
+  },
+  {
+    id: "gevorg-grigoryan",
+    name: "Գևորգ Գրիգորյան",
+    distributionSectionId: "europe",
+    country: "Եվրոպա",
+    city: "—",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_337af5131f904b31a78505ff6e08edb3~mv2.jpg/v1/fill/w_253,h_300,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/487002929_29523624217224689_2644955363019547876_n_edited.jpg",
+    bio: "Опубликован в списке сенаторов блока Европа.",
+  },
+  {
+    id: "robert-abrahamyan-europe",
+    name: "Ռոբերտ Աբրահամյան",
+    distributionSectionId: "europe",
+    country: "Եվրոպա",
+    city: "—",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_d3741a2a7a7941c5a940a97a0205f76d~mv2.jpg/v1/fill/w_287,h_329,al_c,lg_1,q_80,enc_avif,quality_auto/373416727_1013799816711012_4773968636419086474_n_edited.jpg",
+    bio: "Опубликован в списке сенаторов блока Европа.",
+  },
+  {
+    id: "ghukas-manukyan-europe",
+    name: "Ղուկաս Մանուկյան",
+    distributionSectionId: "europe",
+    country: "Եվրոպա",
+    city: "—",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_5358638a6a0549d496affd0a1eabd634~mv2.jpg/v1/fill/w_277,h_329,al_c,lg_1,q_80,enc_avif,quality_auto/355854081_1192897042105237_5971321152800836845_n_edited.jpg",
+    bio: "Опубликован в списке сенаторов блока Европа.",
+  },
+  {
+    id: "artak-ghukasyan",
+    name: "Արտակ Ղուկասյան",
+    distributionSectionId: "europe",
+    country: "Եվրոպա",
+    city: "—",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_07265d55fa154612adb0219b9dcee2dc~mv2.jpg/v1/fill/w_234,h_329,al_c,lg_1,q_80,enc_avif,quality_auto/352409233_965868651533190_8739659972698191359_n_edited.jpg",
+    bio: "Опубликован в списке сенаторов блока Европа.",
+  },
+];
 export const regionCandidates: PersonCard[] = [];
 export const institutionMandateHolders: PersonCard[] = [];
 export const institutionCandidates: PersonCard[] = [];

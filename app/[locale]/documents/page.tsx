@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Download, FileText } from "lucide-react";
+import { ExternalLink, FileText } from "lucide-react";
 import { notFound } from "next/navigation";
 
 import { AnimatedSection } from "@/components/site/animated-section";
@@ -38,13 +38,14 @@ export default async function DocumentsPage({
       <PageHero
         eyebrow={locale === "ru" ? "Документы" : locale === "en" ? "Documents" : "Փաստաթղթեր"}
         title={locale === "ru" ? "Основные документы Сената" : locale === "en" ? "Core Senate documents" : "Սենատի հիմնական փաստաթղթերը"}
-        description={locale === "ru" ? "Пока на странице собраны ключевые программные документы организации." : locale === "en" ? "For now, the page contains the key programmatic documents of the organization." : "Այս էջում հավաքված են կազմակերպության հիմնական ծրագրային փաստաթղթերը։"}
+        description={locale === "ru" ? "Ключевые программные и рабочие документы организации." : locale === "en" ? "Core programmatic and working documents of the organization." : "Կազմակերպության հիմնական ծրագրային և աշխատանքային փաստաթղթերը։"}
       />
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
         <AnimatedSection>
           <div className="grid gap-5 lg:grid-cols-2">
             {documents.map((document) => {
-              const fileUrl = withBasePath(document.fileUrl);
+              const isExternal = document.fileUrl.startsWith("http");
+              const fileUrl = isExternal ? document.fileUrl : withBasePath(document.fileUrl);
 
               return (
                 <Card key={document.id}>
@@ -69,12 +70,14 @@ export default async function DocumentsPage({
                       {locale === "ru" ? "Читать" : locale === "en" ? "Read" : "Կարդալ"}
                     </Link>
                   </Button>
-                  <Button asChild variant="outline">
-                    <a href={fileUrl} download>
-                      <Download className="h-4 w-4" />
-                      {locale === "ru" ? "Скачать" : locale === "en" ? "Download" : "Ներբեռնել"}
-                    </a>
-                  </Button>
+                  {document.sourceUrl ? (
+                    <Button asChild variant="outline">
+                      <Link href={document.sourceUrl} target="_blank">
+                        <ExternalLink className="h-4 w-4" />
+                        {locale === "ru" ? "Источник" : locale === "en" ? "Source" : "Աղբյուր"}
+                      </Link>
+                    </Button>
+                  ) : null}
                 </div>
                 </Card>
               );

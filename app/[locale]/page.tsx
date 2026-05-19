@@ -63,7 +63,7 @@ export default async function HomePage({
               </Link>
               <Link href={getLocalizedPath(locale, "join")}>
                 <Button variant="secondary">
-                  {locale === "ru" ? "Стать сенатором" : locale === "en" ? "Become a Senator" : "Դառնալ սենատոր"}
+                  {locale === "ru" ? "Присоединиться" : locale === "en" ? "Join" : "Միանալ"}
                 </Button>
               </Link>
               <Link href={getLocalizedPath(locale, "documents")}>

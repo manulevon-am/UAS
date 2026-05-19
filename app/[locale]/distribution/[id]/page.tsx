@@ -2,8 +2,14 @@ import { notFound } from "next/navigation";
 
 import { AnimatedSection } from "@/components/site/animated-section";
 import { PageHero } from "@/components/site/page-hero";
+import { PeopleBlock } from "@/components/site/people-block";
 import { Card } from "@/components/ui/card";
-import { findDistributionSectionById, getFreeSeats, mandateDistributionSections } from "@/data/site-content";
+import {
+  findDistributionSectionById,
+  getFreeSeats,
+  mandateDistributionSections,
+  regionSenators,
+} from "@/data/site-content";
 import { isLocale } from "@/lib/i18n";
 
 export async function generateStaticParams() {
@@ -43,6 +49,9 @@ export default async function DistributionDetailPage({
   }
 
   const freeSeats = getFreeSeats(section);
+  const mandateHolders = regionSenators.filter(
+    (item) => item.distributionSectionId === id,
+  );
 
   return (
     <div>
@@ -115,6 +124,20 @@ export default async function DistributionDetailPage({
               ))}
             </div>
           </Card>
+        </AnimatedSection>
+
+        <AnimatedSection>
+          <PeopleBlock
+            title={locale === "ru" ? "Избранные сенаторы" : locale === "en" ? "Elected senators" : "Ընտրված սենատորներ"}
+            people={mandateHolders}
+            emptyText={
+              locale === "ru"
+                ? "В этом разделе пока нет опубликованных избранных сенаторов."
+                : locale === "en"
+                  ? "No elected senators have been published for this section yet."
+                  : "Այս բաժնում դեռ հրապարակված ընտրված սենատորներ չկան։"
+            }
+          />
         </AnimatedSection>
       </div>
     </div>

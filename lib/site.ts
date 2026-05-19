@@ -10,6 +10,7 @@ export const routeKeys = [
   "home",
   "structure",
   "documents",
+  "news",
   "join",
 ] as const;
 
@@ -19,6 +20,7 @@ export const routePaths: Record<RouteKey, string> = {
   home: "",
   structure: "structure",
   documents: "documents",
+  news: "news",
   join: "join",
 };
 

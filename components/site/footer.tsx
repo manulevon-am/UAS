@@ -15,7 +15,7 @@ export function Footer({
     email: string;
     phone: string;
   };
-  navigation: { key: "home" | "structure" | "documents" | "join"; label: string }[];
+  navigation: { key: "home" | "structure" | "documents" | "news"; label: string }[];
 }) {
   return (
     <footer className="border-t border-[var(--color-border)] bg-white">
