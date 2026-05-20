@@ -6,6 +6,7 @@ import { AnimatedSection } from "@/components/site/animated-section";
 import { HeroCobeGlobe } from "@/components/site/hero-cobe-globe";
 import { MandateMap } from "@/components/site/mandate-map";
 import { MandateDistributionAccordion } from "@/components/site/mandate-distribution-accordion";
+import { PartnersCarousel } from "@/components/site/partners-carousel";
 import { SectionHeading } from "@/components/site/section-heading";
 import { UasSystemDiagram } from "@/components/site/uas-system-diagram";
 import { Button } from "@/components/ui/button";
@@ -123,6 +124,10 @@ export default async function HomePage({
               </Button>
             </Link>
           </div>
+        </AnimatedSection>
+
+        <AnimatedSection>
+          <PartnersCarousel locale={locale} />
         </AnimatedSection>
       </div>
     </div>
