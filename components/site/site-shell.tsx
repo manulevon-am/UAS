@@ -3,7 +3,7 @@ import { Header } from "@/components/site/header";
 import { footerContent, navigationLabels } from "@/data/site-content";
 import type { Locale } from "@/lib/i18n";
 
-const navKeys = ["home", "structure", "cec", "news"] as const;
+const navKeys = ["home", "structure", "news"] as const;
 
 export function SiteShell({
   locale,
