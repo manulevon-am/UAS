@@ -8,7 +8,13 @@ type RouteContent = {
   description: string;
 };
 
-export type StaticRoute = "home" | "structure" | "documents" | "news" | "join";
+export type StaticRoute =
+  | "home"
+  | "structure"
+  | "cec"
+  | "documents"
+  | "news"
+  | "join";
 
 export type MandateBlock = {
   id: string;
@@ -21,29 +27,9 @@ export type MandateBlock = {
     x: number;
     y: number;
   };
-};
-
-export type MandateDistributionRow = {
-  id: string;
-  index: number;
-  region: LocalizedText;
-  entries: {
+  subRegions?: {
     label: LocalizedText;
-    seats: LocalizedText;
-  }[];
-};
-
-export type MandateDistributionSection = {
-  id: string;
-  index: number;
-  title: LocalizedText;
-  seatsTotal: number;
-  seatsOccupied: number;
-  candidates: number;
-  entries: {
-    label: LocalizedText;
-    seats: LocalizedText;
-    seatsValue: number;
+    seats: number;
   }[];
 };
 
@@ -67,6 +53,7 @@ export type PersonCard = {
   votesFor?: number;
   votesAgainst?: number;
   photo?: string;
+  socialUrl?: string;
   bio: string;
 };
 
@@ -93,6 +80,11 @@ export const routeMeta: Record<Locale, Record<StaticRoute, RouteContent>> = {
       title: "Структура мандатов",
       description:
         "Распределение 501 мандата по регионам, институциональным квотам и структурным органам Всеармянского Сената.",
+    },
+    cec: {
+      title: "Центральная избирательная комиссия (ЦИК)",
+      description:
+        "Как проходят онлайн-выборы Сената: этапы работы ЦИК, легитимность, структура комиссий и международно-правовая основа.",
     },
     documents: {
       title: "Документы",
@@ -121,6 +113,11 @@ export const routeMeta: Record<Locale, Record<StaticRoute, RouteContent>> = {
       description:
         "The distribution of 501 mandates across regional blocks, institutional quotas, and Senate bodies.",
     },
+    cec: {
+      title: "Центральная избирательная комиссия (ЦИК)",
+      description:
+        "Как проходят онлайн-выборы Сената: этапы работы ЦИК, легитимность, структура комиссий и международно-правовая основа.",
+    },
     documents: {
       title: "Documents",
       description:
@@ -148,6 +145,11 @@ export const routeMeta: Record<Locale, Record<StaticRoute, RouteContent>> = {
       description:
         "501 մանդատների բաշխումը տարածաշրջանային բլոկների, ինստիտուցիոնալ քվոտաների և Սենատի մարմինների միջև։",
     },
+    cec: {
+      title: "Центральная избирательная комиссия (ЦИК)",
+      description:
+        "Как проходят онлайн-выборы Сената: этапы работы ЦИК, легитимность, структура комиссий и международно-правовая основа.",
+    },
     documents: {
       title: "Փաստաթղթեր",
       description:
@@ -173,6 +175,7 @@ export const navigationLabels: Record<
   ru: {
     home: "Главная",
     structure: "Структура",
+    cec: "ЦИК",
     documents: "Документы",
     news: "Новости",
     join: "Присоединиться",
@@ -181,6 +184,7 @@ export const navigationLabels: Record<
   en: {
     home: "Home",
     structure: "Structure",
+    cec: "CEC",
     documents: "Documents",
     news: "News",
     join: "Join",
@@ -189,6 +193,7 @@ export const navigationLabels: Record<
   hy: {
     home: "Գլխավոր",
     structure: "Կառուցվածք",
+    cec: "ԿԸՀ",
     documents: "Փաստաթղթեր",
     news: "Նորություններ",
     join: "Միանալ",
@@ -199,14 +204,10 @@ export const navigationLabels: Record<
 export const homePageContent = {
   heroEyebrow: loc("Международная институциональная платформа"),
   heroSubtitle: loc(
-    "Всеармянский Сенат — международная платформа координации и представительства армянских общин мира.",
-    "The United Armenian Senate is an international platform for coordination and representation of Armenian communities worldwide.",
-    "Համահայկական Սենատը համաշխարհային հայկական համայնքների համակարգման և ներկայացուցչության միջազգային հարթակ է։",
+    "Всеармянский сенат (UAS) — это международная общественно-политическая организация, созданная на выборной основе. Она объединяет представителей армянской диаспоры (Спюрка) и самой Армении.",
   ),
   heroText: loc(
-    "Сенат объединяет армянские общины, организации и представителей по всему миру для координации взаимодействия, сотрудничества и представления интересов армянства.",
-    "The Senate brings together Armenian communities, organizations, and representatives worldwide to coordinate efforts, defend Armenian rights, and build a unified institutional framework.",
-    "Սենատը միավորում է հայկական համայնքները, կազմակերպություններն ու ներկայացուցիչներին ամբողջ աշխարհում՝ համակարգման, հայության իրավունքների պաշտպանության և միասնական ինստիտուցիոնալ կառուցվածքի ձևավորման համար։",
+    "Будучи экспертно-аналитической и координационной платформой, Сенат не занимается законотворчеством в классическом понимании, а фокусируется на решении специфических стратегических задач.",
   ),
   aboutTitle: loc("О Сенате", "About the Senate", "Սենատի մասին"),
   aboutText: loc(
@@ -214,79 +215,62 @@ export const homePageContent = {
     "The unified scheme shows how UAS connects the mandate system, governance bodies, and the key tasks of the international Armenian platform.",
     "Միասնական սխեման ցույց է տալիս, թե ինչպես է UAS-ը միավորում մանդատային համակարգը, կառավարման մարմիններն ու համահայկական հարթակի հիմնական խնդիրները։",
   ),
-  senateTitle: loc("Что такое Сенат"),
-  senateCards: [
+  orgTiles: [
     {
-      title: loc("501 мандат"),
-      description: loc("Система глобального представительства армянства."),
-    },
-    {
-      title: loc("9 региональных блоков"),
+      title: loc("ЦИК"),
       description: loc(
-        "Региональная структура мандатов по ключевым зонам армянского мира.",
+        "Центральная координация процедур, отбора и внутренней организации.",
       ),
     },
     {
-      title: loc("Кандидаты и выборы"),
+      title: loc("501 сенатский мандат"),
       description: loc(
-        "Сенаторы могут выдвигаться общинами, организациями или через самовыдвижение.",
+        "Представительная база UAS, распределённая по международным блокам. В их число входят 12 пожизненных сенаторов.",
+      ),
+    },
+    {
+      title: loc("Совет старейшин"),
+      description: loc(
+        "Консультативное и стратегическое звено институциональной преемственности.",
       ),
     },
     {
       title: loc("Структурные органы"),
       description: loc(
-        "Комиссии и рабочие органы Сената отвечают за направления деятельности.",
+        "Комиссии, аналитические центры и рабочие направления Сената.",
       ),
     },
   ],
-  tasksTitle: loc("Главные задачи Сената"),
+  tasksTitle: loc("Миссия и функции"),
   tasks: [
     {
-      title: loc(
-        "Координация и развитие глобального армянского взаимодействия",
-        "Coordination and Development of Global Armenian Interaction",
-        "Համաշխարհային հայկական փոխգործակցության համակարգում և զարգացում",
-      ),
+      title: loc("Консолидация потенциала диаспоры и Армении"),
       description: loc(
-        "Развитие взаимодействия и сотрудничества между армянскими общинами, организациями и представителями по всему миру.",
-        "Development of interaction and cooperation among Armenian communities, organizations, and representatives around the world.",
-        "Ամբողջ աշխարհում հայկական համայնքների, կազմակերպությունների և ներկայացուցիչների միջև փոխգործակցության և համագործակցության զարգացում։",
+        "Сенаторы координируют взаимодействие между крупными предпринимателями, учеными и общественными деятелями, проживающими за рубежом, а также выстраивают диалог с государственными институтами стран их проживания.",
       ),
     },
     {
-      title: loc(
-        "Международное и правовое представительство",
-        "International and Legal Representation",
-        "Միջազգային և իրավական ներկայացուցչություն",
-      ),
+      title: loc("Защита национальных и геополитических интересов"),
       description: loc(
-        "Представление интересов армянства и армянских общин в международной общественной и правовой повестке.",
-        "Representation of Armenian interests and Armenian communities within the international public and legal agenda.",
-        "Հայության և հայկական համայնքների շահերի ներկայացում միջազգային հանրային և իրավական օրակարգում։",
+        "Организация регулярно выступает с заявлениями и продвигает интересы армянства на международной арене. Это включает в себя отстаивание прав армянского народа на основе Севрского мирного договора, вопросы репараций, защиты суверенитета, безопасности границ и сохранения национальной идентичности.",
       ),
     },
     {
-      title: loc(
-        "Консолидация армянского потенциала",
-        "Consolidation of Armenian Potential",
-        "Հայկական ներուժի համախմբում",
-      ),
+      title: loc("Обеспечение экономической и энергетической безопасности"),
       description: loc(
-        "Объединение интеллектуальных, общественных и организационных ресурсов армянского мира для долгосрочного развития и взаимодействия.",
-        "Bringing together the intellectual, civic, and organizational resources of the Armenian world for long-term development and cooperation.",
-        "Հայկական աշխարհի մտավոր, հանրային և կազմակերպական ռեսուրսների համախմբում՝ երկարաժամկետ զարգացման և համագործակցության համար։",
+        "Сенаторы осуществляют мониторинг рисков, связанных со стратегическими активами Армении (крупными инфраструктурными и энергетическими объектами), и противодействуют попыткам их внешнего или недружественного поглощения.",
       ),
     },
     {
-      title: loc(
-        "Формирование общеармянского представительного органа",
-        "Formation of a Pan-Armenian Representative Body",
-        "Համահայկական ներկայացուցչական մարմնի ձևավորում",
-      ),
+      title: loc("Взаимодействие с Правительством Западной Армении в изгнании"),
       description: loc(
-        "Содействие развитию всеармянского участия и представлению интересов армянства в общеармянских вопросах.",
-        "Supporting the development of pan-Armenian participation and the representation of Armenian interests in common Armenian issues.",
-        "Աջակցություն համահայկական մասնակցության զարգացմանը և հայության շահերի ներկայացմանը համահայկական հարցերում։",
+        "Всеармянский сенат тесно сотрудничает со структурами, поднимающими вопросы защиты прав армянского населения Западной Армении, международного признания Геноцида и сохранения культурно-исторического наследия.",
+      ),
+    },
+    {
+      title: loc("Инвестиционное кураторство и фондовая деятельность"),
+      description: loc(
+        "Одной из ключевых практических задач является создание специализированного фонда. Его деятельность направлена на реализацию положений Севрского мирного договора, международное признание правопреемственности Первой Республики Армения и продвижение вопроса о репарациях.",
       ),
     },
   ],
@@ -302,515 +286,212 @@ export const homePageContent = {
   bodiesText: loc(
     "Рабочие органы Сената отвечают за ключевые направления общественной, правовой, аналитической, культурной и организационной деятельности.",
   ),
+  commissionsTitle: loc("Главные избирательные комиссии Сената"),
+  commissions: [
+    {
+      country: loc("Республика Армения"),
+      office: loc("Основная комиссия в Ереване"),
+      flag: "am",
+    },
+    {
+      country: loc("Российская Федерация"),
+      office: loc("Территориальная комиссия в Москве"),
+      flag: "ru",
+    },
+    {
+      country: loc("Соединённые Штаты Америки"),
+      office: loc("Территориальная комиссия в Лос-Анджелесе"),
+      flag: "us",
+    },
+    {
+      country: loc("Европейский Союз"),
+      office: loc("Территориальная комиссия в Берлине, Германия"),
+      flag: "eu",
+    },
+  ],
   becomeTitle: loc("Как стать сенатором"),
   becomeText: loc(
-    "Кандидаты в сенаторы могут быть выдвинуты армянскими общинами, организациями, общественными структурами или подать заявку через механизм самовыдвижения.",
+    "Кандидатами могут стать армяне, достигшие 35-летнего возраста и обладающие определенным общественным авторитетом, независимо от места их жительства. Участники Шестого Всеармянского форума «Армения-Диаспора» имеют право выдвигать свои кандидатуры.",
   ),
   becomeCards: [
     loc("Самовыдвижение"),
-    loc("Выдвижение общиной"),
-    loc("Выдвижение организацией"),
-    loc("Кандидат от общественной структуры"),
+    loc("Под гарантии трёх граждан"),
+    loc("От армянской организации"),
+  ],
+  becomeCondition: loc(
+    "Каждый кандидат обязан самостоятельно организовать собственную избирательную кампанию и обеспечить себе на выборах не менее 501 голоса.",
+  ),
+  lifetimeTitle: loc("12 пожизненных сенаторов"),
+  lifetimeText: loc(
+    "Постоянный почётный состав Сената. Двенадцать пожизненных сенаторов входят в число 501 мандата.",
+  ),
+  lifetimeSenators: [
+    { name: "Арам Мкртчян", country: "Германия", flag: "de" },
+    { name: "Тигран Багратуни", country: "Германия", flag: "de" },
+    { name: "Карине Айрапетян", country: "Германия", flag: "de" },
+    { name: "Ваге Месропян", country: "США", flag: "us" },
+    { name: "Бакур Карапетян", country: "Армения", flag: "am" },
+    { name: "Азат Саргсян", country: "Армения", flag: "am" },
+    { name: "Кармен Мирзоян", country: "Франция", flag: "fr" },
+    { name: "Ваге Махчикян", country: "Сирия", flag: "sy" },
+    { name: "Арсен Абраамян", country: "Россия", flag: "ru" },
+    { name: "Лариса Оганесян", country: "Испания", flag: "es" },
+  ],
+  legalBasisTitle: loc("Международные институты и правовые стандарты"),
+  legalBasisText: loc(
+    "Деятельность Избирательной комиссии и процедура формирования Сената строго регламентированы международными нормами.",
+  ),
+  legalBasisCards: [
+    {
+      title: loc("Совет Европы"),
+      badge: "F-67075",
+      description: loc(
+        "Методология и правила проведения голосования опираются на официальное руководство: «Применение международных избирательных стандартов. Справочник Совета Европы для организаций гражданского общества» (Council of Europe, Strasbourg, F-67075).",
+      ),
+    },
+    {
+      title: loc("Принципы гуманитарного права"),
+      badge: "jus in bello",
+      description: loc(
+        "Комиссия обеспечивает защиту прав и равный доступ к голосованию для всех участников, независимо от внешних кризисных факторов.",
+      ),
+    },
   ],
 };
 
 export const mandateRegions: MandateBlock[] = [
   {
     id: "armenia",
-    title: loc("Армения"),
+    title: loc("Армения", "Armenia", "Հայաստան"),
     seatsTotal: 120,
-    seatsOccupied: 1,
+    seatsOccupied: 24,
     candidates: 0,
     description: loc(
       "Армения, беженцы из Азербайджана, Арцах, Нахичевань, Карс, Сурмалу",
+      "Armenia, refugees from Azerbaijan, Artsakh, Nakhichevan, Kars, Surmalu",
+      "Հայաստան, Ադրբեջանից փախստականներ, Արցախ, Նախիջևան, Կարս, Սուրմալու",
     ),
     marker: { x: 55, y: 44 },
   },
   {
     id: "russia-cis",
-    title: loc("РФ и страны СНГ"),
+    title: loc("РФ и страны СНГ", "Russia and CIS countries", "ՌԴ և ԱՊՀ երկրներ"),
     seatsTotal: 110,
-    seatsOccupied: 15,
-    candidates: 0,
-    description: loc("РФ и страны СНГ"),
+    seatsOccupied: 26,
+    candidates: 2,
+    description: loc(
+      "Российская Федерация и страны СНГ",
+      "Russian Federation and CIS countries",
+      "Ռուսաստանի Դաշնություն և ԱՊՀ երկրներ",
+    ),
     marker: { x: 64, y: 24 },
   },
   {
     id: "usa-canada",
-    title: loc("США и Канада"),
+    title: loc("США и Канада", "USA and Canada", "ԱՄՆ և Կանադա"),
     seatsTotal: 100,
-    seatsOccupied: 1,
+    seatsOccupied: 9,
     candidates: 0,
-    description: loc("США — 75 мандатов, Канада — 25 мандатов"),
+    description: loc(
+      "США — 75 мандатов, Канада — 25 мандатов",
+      "USA — 75 mandates, Canada — 25 mandates",
+      "ԱՄՆ — 75 մանդատ, Կանադա — 25 մանդատ",
+    ),
     marker: { x: 18, y: 28 },
+    subRegions: [
+      { label: loc("США", "USA", "ԱՄՆ"), seats: 75 },
+      { label: loc("Канада", "Canada", "Կանադա"), seats: 25 },
+    ],
   },
   {
     id: "sevres",
-    title: loc("Страны Севрского Договора"),
+    title: loc(
+      "Страны Севрского Договора",
+      "Sèvres Treaty Countries",
+      "Սևրի դաշնագիրը վավերացրած երկրներ",
+    ),
     seatsTotal: 66,
-    seatsOccupied: 0,
+    seatsOccupied: 11,
     candidates: 0,
-    description: loc("Страны Севрского Договора"),
+    description: loc(
+      "Страны, ратифицировавшие Севрский договор",
+      "Countries that ratified the Sèvres Treaty",
+      "Սևրի դաշնագիրը վավերացրած երկրներ",
+    ),
     marker: { x: 46, y: 21 },
   },
   {
     id: "south-america",
-    title: loc("Южная Америка"),
+    title: loc("Южная Америка", "South America", "Հարավային Ամերիկա"),
     seatsTotal: 42,
-    seatsOccupied: 0,
+    seatsOccupied: 2,
     candidates: 0,
-    description: loc("Армянские общины стран Южной Америки"),
+    description: loc(
+      "Армянские общины стран Южной Америки",
+      "Armenian communities of South America",
+      "Հարավային Ամերիկայի հայկական համայնքներ",
+    ),
     marker: { x: 28, y: 72 },
   },
   {
     id: "australia-asia",
-    title: loc("Австралия и Южная/Восточная Азия"),
+    title: loc(
+      "Австралия и Южная/Восточная Азия",
+      "Australia and South/East Asia",
+      "Ավստրալիա և Հարավային/Արևելյան Ասիա",
+    ),
     seatsTotal: 24,
     seatsOccupied: 0,
     candidates: 0,
-    description: loc("Австралия, страны Южной и Восточной Азии"),
+    description: loc(
+      "Австралия, страны Южной и Восточной Азии",
+      "Australia, countries of South and East Asia",
+      "Ավստրալիա, Հարավային և Արևելյան Ասիայի երկրներ",
+    ),
     marker: { x: 82, y: 68 },
   },
   {
     id: "middle-east",
-    title: loc("Страны Ближнего Востока"),
+    title: loc(
+      "Страны Ближнего Востока",
+      "Middle Eastern countries",
+      "Մերձավոր Արևելքի երկրներ",
+    ),
     seatsTotal: 18,
-    seatsOccupied: 0,
+    seatsOccupied: 2,
     candidates: 0,
-    description: loc("Страны Ближнего Востока"),
+    description: loc(
+      "Армянские общины Ближнего Востока",
+      "Armenian communities of the Middle East",
+      "Մերձավոր Արևելքի հայկական համայնքներ",
+    ),
     marker: { x: 57, y: 41 },
   },
   {
     id: "georgia",
-    title: loc("Грузия"),
+    title: loc("Грузия", "Georgia", "Վրաստան"),
     seatsTotal: 11,
-    seatsOccupied: 0,
+    seatsOccupied: 2,
     candidates: 0,
-    description: loc("Армянская община Грузии"),
+    description: loc(
+      "Армянская община Грузии",
+      "Armenian community of Georgia",
+      "Վրաստանի հայ համայնք",
+    ),
     marker: { x: 56, y: 39 },
   },
   {
     id: "iran",
-    title: loc("Иран"),
+    title: loc("Иран", "Iran", "Իրան"),
     seatsTotal: 10,
-    seatsOccupied: 0,
-    candidates: 0,
-    description: loc("Иран"),
-    marker: { x: 60, y: 44 },
-  },
-];
-
-export const institutionBlocks: MandateBlock[] = [
-  {
-    id: "apostolic-church",
-    title: loc("Армянская Апостольская Церковь"),
-    seatsTotal: 14,
-    seatsOccupied: 0,
-    candidates: 0,
-    description: loc("Эчмиадзин — 7 мест, Антилиас — 7 мест"),
-    marker: { x: 0, y: 0 },
-  },
-  {
-    id: "catholic-evangelical",
-    title: loc("Католические и Евангелические церкви"),
-    seatsTotal: 10,
-    seatsOccupied: 0,
-    candidates: 0,
-    description: loc(
-      "Католическая церковь — 5 мест, Евангелическая церковь — 5 мест",
-    ),
-    marker: { x: 0, y: 0 },
-  },
-  {
-    id: "unions",
-    title: loc("Союзы и общественные организации"),
-    seatsTotal: 20,
-    seatsOccupied: 0,
-    candidates: 0,
-    description: loc("Землячества, общественные союзы и другие структуры"),
-    marker: { x: 0, y: 0 },
-  },
-];
-
-export const mandateMapGroups: MandateBlock[] = [
-  {
-    id: "sevres-18",
-    title: loc("Страны Севрского Договора", "Sevres Treaty Countries", "Սևրի դաշնագիրը վավերացրած երկրներ"),
-    seatsTotal: 54,
-    seatsOccupied: 0,
-    candidates: 0,
-    description: loc("18 стран, ратифицировавших Севрский договор", "18 countries of the Sevres Treaty", "Սևրի դաշնագիրը վավերացրած 18 երկրներ"),
-    marker: { x: 46, y: 21 },
-  },
-  {
-    id: "usa-canada-total",
-    title: loc("США и Канада", "USA and Canada", "ԱՄՆ և Կանադա"),
-    seatsTotal: 96,
-    seatsOccupied: 0,
-    candidates: 0,
-    description: loc("Общины и иные армянские структуры США и Канады", "Communities and Armenian structures in the USA and Canada", "ԱՄՆ և Կանադայի համայնքներ և հայկական կառույցներ"),
-    marker: { x: 18, y: 28 },
-  },
-  {
-    id: "russia-total",
-    title: loc("РФ", "Russia", "ՌԴ"),
-    seatsTotal: 55,
-    seatsOccupied: 0,
-    candidates: 0,
-    description: loc("Общины, Конгресс и РҲМ", "Communities, Congress and RHM", "Համայնքներ, Կոնգրես և ՌՀՄ"),
-    marker: { x: 64, y: 24 },
-  },
-  {
-    id: "middle-east-total",
-    title: loc("Страны Ближнего Востока", "Middle East", "Մերձավոր Արևելքի երկրներ"),
-    seatsTotal: 30,
-    seatsOccupied: 0,
-    candidates: 0,
-    description: loc("Общины и армянские структуры", "Communities and Armenian structures", "Համայնքներ և հայկական կառույցներ"),
-    marker: { x: 57, y: 41 },
-  },
-  {
-    id: "latin-america-total",
-    title: loc("Латинская Америка", "Latin America", "Լատինական Ամերիկա"),
-    seatsTotal: 40,
-    seatsOccupied: 0,
-    candidates: 0,
-    description: loc("Общины и армянские структуры", "Communities and Armenian structures", "Համայնքներ և հայկական կառույցներ"),
-    marker: { x: 28, y: 72 },
-  },
-  {
-    id: "australia-asia-total",
-    title: loc("Австралия и Южная/Восточная Азия", "Australia and South/East Asia", "Ավստրալիա և Հարավային/Արևելյան Ասիա"),
-    seatsTotal: 30,
-    seatsOccupied: 0,
-    candidates: 0,
-    description: loc("Армянские общины региона", "Armenian communities of the region", "Տարածաշրջանի հայկական համայնքներ"),
-    marker: { x: 82, y: 68 },
-  },
-  {
-    id: "europe-total",
-    title: loc("Европа", "Europe", "Եվրոպա"),
-    seatsTotal: 82,
-    seatsOccupied: 0,
-    candidates: 0,
-    description: loc("Общины, структуры и Հայ Դատ", "Communities, structures and Hay Dat", "Համայնքներ, կառույցներ և Հայ Դատ"),
-    marker: { x: 50, y: 18 },
-  },
-  {
-    id: "central-asia-iran-total",
-    title: loc("Средняя Азия и Иран", "Central Asia and Iran", "Միջին Ասիա և Իրան"),
-    seatsTotal: 35,
-    seatsOccupied: 0,
-    candidates: 0,
-    description: loc("Армянские общины региона", "Armenian communities of the region", "Տարածաշրջանի հայկական համայնքներ"),
-    marker: { x: 67, y: 39 },
-  },
-  {
-    id: "ukraine-georgia-moldova-belarus-total",
-    title: loc("Украина, Грузия, Молдова, Беларусь", "Ukraine, Georgia, Moldova, Belarus", "Ուկրաինա, Վրաստան, Մոլդովա, Բելոռուս"),
-    seatsTotal: 35,
-    seatsOccupied: 0,
-    candidates: 0,
-    description: loc("Армянские общины региона", "Armenian communities of the region", "Տարածաշրջանի հայկական համայնքներ"),
-    marker: { x: 58, y: 26 },
-  },
-];
-
-export const mandateDistributionRows: MandateDistributionRow[] = [
-  {
-    id: "dist-1",
-    index: 1,
-    region: loc("18 стран, ратифицировавших Севрский договор", "18 countries that ratified the Sevres Treaty", "Սևրի դաշնագիրը վավերացրած 18 երկրներ"),
-    entries: [
-      { label: loc("армянские общины", "Armenian communities", "հայկական համայնքներ"), seats: loc("54 мест", "54 seats", "54 տեղ") },
-      { label: loc("армянские структуры", "Armenian structures", "հայկական կառույցներ"), seats: loc("", "", "") },
-    ],
-  },
-  {
-    id: "dist-2",
-    index: 2,
-    region: loc("США, Канада", "USA, Canada", "ԱՄՆ, Կանադա"),
-    entries: [
-      { label: loc("армянские общины", "Armenian communities", "հայկական համայնքներ"), seats: loc("40 мест", "40 seats", "40 տեղ") },
-    ],
-  },
-  {
-    id: "dist-3",
-    index: 3,
-    region: loc("США, Канада", "USA, Canada", "ԱՄՆ, Կանադա"),
-    entries: [
-      { label: loc("иные армянские структуры", "other Armenian structures", "հայկական այլ կառույցներ"), seats: loc("15 мест", "15 seats", "15 տեղ") },
-      { label: loc("Армянский конгресс", "Armenian Congress", "Հայկական Համագումար"), seats: loc("18 мест", "18 seats", "18 տեղ") },
-      { label: loc("Ай Дат", "Hay Dat", "Հայ Դատ"), seats: loc("6 мест", "6 seats", "6 տեղ") },
-      { label: loc("Благотворительные структуры", "Charitable organizations", "Բարեգործական"), seats: loc("5 мест", "5 seats", "5 տեղ") },
-      { label: loc("традиционные партии", "traditional parties", "Ավանդական կուսակցություններ"), seats: loc("12 мест", "12 seats", "12 տեղ") },
-    ],
-  },
-  {
-    id: "dist-4",
-    index: 4,
-    region: loc("РФ", "Russia", "ՌԴ"),
-    entries: [
-      { label: loc("армянские общины", "Armenian communities", "հայկական համայնքներ"), seats: loc("35 мест", "35 seats", "35 տեղ") },
-    ],
-  },
-  {
-    id: "dist-5",
-    index: 5,
-    region: loc("РФ", "Russia", "ՌԴ"),
-    entries: [
-      { label: loc("Армянский конгресс", "Armenian Congress", "Հայկական Կոնգրես"), seats: loc("10 мест", "10 seats", "10 տեղ") },
-      { label: loc("РҲМ", "RHM", "ՌՀՄ"), seats: loc("10 мест", "10 seats", "10 տեղ") },
-    ],
-  },
-  {
-    id: "dist-6",
-    index: 6,
-    region: loc("Страны Ближнего Востока", "Middle Eastern countries", "Մերձավոր Արևելքի երկրներ"),
-    entries: [
-      { label: loc("армянские общины", "Armenian communities", "հայկական համայնքներ"), seats: loc("20 мест", "20 seats", "20 տեղ") },
-    ],
-  },
-  {
-    id: "dist-7",
-    index: 7,
-    region: loc("Страны Ближнего Востока", "Middle Eastern countries", "Մերձավոր Արևելքի երկրներ"),
-    entries: [
-      { label: loc("армянские структуры", "Armenian structures", "հայկական կառույցներ"), seats: loc("10 мест", "10 seats", "10 տեղ") },
-    ],
-  },
-  {
-    id: "dist-8",
-    index: 8,
-    region: loc("Страны Латинской Америки", "Latin American countries", "Լատ. Ամերիկայի երկրներ"),
-    entries: [
-      { label: loc("армянские общины", "Armenian communities", "հայկական համայնքներ"), seats: loc("30 мест", "30 seats", "30 տեղ") },
-    ],
-  },
-  {
-    id: "dist-9",
-    index: 9,
-    region: loc("Страны Латинской Америки", "Latin American countries", "Լատ. Ամերիկայի երկրներ"),
-    entries: [
-      { label: loc("армянские структуры", "Armenian structures", "հայկական կառույցներ"), seats: loc("10 мест", "10 seats", "10 տեղ") },
-    ],
-  },
-  {
-    id: "dist-10",
-    index: 10,
-    region: loc("Австралия, страны Южной и Восточной Азии", "Australia, South and East Asian countries", "Ավստրալիա, Հարավային և Արևելյան Ասիայի երկրներ"),
-    entries: [
-      { label: loc("армянские общины", "Armenian communities", "հայկական համայնքներ"), seats: loc("30 мест", "30 seats", "30 տեղ") },
-    ],
-  },
-  {
-    id: "dist-11",
-    index: 11,
-    region: loc("Европейские страны", "European countries", "Եվրոպական երկրներ"),
-    entries: [
-      { label: loc("армянские общины", "Armenian communities", "հայկական համայնքներ"), seats: loc("50 мест", "50 seats", "50 տեղ") },
-      { label: loc("армянские структуры", "Armenian structures", "հայկական կառույցներ"), seats: loc("26 мест", "26 seats", "26 տեղ") },
-      { label: loc("Ай Дат", "Hay Dat", "Հայ Դատ"), seats: loc("6 мест", "6 seats", "6 տեղ") },
-    ],
-  },
-  {
-    id: "dist-12",
-    index: 12,
-    region: loc("Среднеазиатские страны и Иран", "Central Asian countries and Iran", "Միջին Ասիական երկրներ և Իրան"),
-    entries: [
-      { label: loc("армянские общины", "Armenian communities", "հայկական համայնքներ"), seats: loc("35 мест", "35 seats", "35 տեղ") },
-    ],
-  },
-  {
-    id: "dist-13",
-    index: 13,
-    region: loc("Украина, Грузия, Молдова, Беларусь", "Ukraine, Georgia, Moldova, Belarus", "Ուկրաինա, Վրաստան, Մոլդովա, Բելոռուս"),
-    entries: [
-      { label: loc("армянские общины", "Armenian communities", "հայկական համայնքներ"), seats: loc("35 мест", "35 seats", "35 տեղ") },
-    ],
-  },
-  {
-    id: "dist-14",
-    index: 14,
-    region: loc("Армянская Апостольская Церковь", "Armenian Apostolic Church", "Հայ Առաքելական եկեղեցի"),
-    entries: [
-      { label: loc("Эчмиадзин", "Etchmiadzin", "Էջմիածին"), seats: loc("7 мест", "7 seats", "7 տեղ") },
-      { label: loc("Антилиас", "Antelias", "Անթիլիաս"), seats: loc("7 мест", "7 seats", "7 տեղ") },
-    ],
-  },
-  {
-    id: "dist-15",
-    index: 15,
-    region: loc("Католические и Евангелические церкви", "Catholic and Evangelical churches", "Կաթողիկե և Ավետարանչական եկեղեցիներ"),
-    entries: [
-      { label: loc("Католические", "Catholic", "Կաթողիկե"), seats: loc("5 мест", "5 seats", "5 տեղ") },
-      { label: loc("Евангелические", "Evangelical", "Ավետարանչական"), seats: loc("5 мест", "5 seats", "5 տեղ") },
-    ],
-  },
-  {
-    id: "dist-16",
-    index: 16,
-    region: loc("Союзы", "Unions", "Միություններ"),
-    entries: [
-      { label: loc("земляческие", "compatriot unions", "Հայրենակցական"), seats: loc("5 мест", "5 seats", "5 տեղ") },
-      { label: loc("Ай Ариакан", "Hay Ariakan", "Հայ Արիական"), seats: loc("3 места", "3 seats", "3 տեղ") },
-      { label: loc("Варданац", "Vardanats", "Վարդանաց"), seats: loc("2 места", "2 seats", "2 տեղ") },
-      { label: loc("Тагадир", "Tagadir", "Թագադիր"), seats: loc("5 мест", "5 seats", "5 տեղ") },
-      { label: loc("армянские беженцы из Азербайджана", "Armenian refugees from Azerbaijan", "Ադրբեջանի հայ փախստականներ"), seats: loc("5 мест", "5 seats", "5 տեղ") },
-    ],
-  },
-];
-
-export const mandateDistributionSections: MandateDistributionSection[] = [
-  {
-    id: "sevres-18",
-    index: 1,
-    title: loc("18 стран, ратифицировавших Севрский договор", "18 countries that ratified the Sevres Treaty", "Սևրի դաշնագիրը վավերացրած 18 երկրներ"),
-    seatsTotal: 54,
-    seatsOccupied: 0,
-    candidates: 0,
-    entries: [
-      { label: loc("армянские общины", "Armenian communities", "հայկական համայնքներ"), seats: loc("54 мест", "54 seats", "54 տեղ"), seatsValue: 54 },
-      { label: loc("армянские структуры", "Armenian structures", "հայկական կառույցներ"), seats: loc("—", "—", "—"), seatsValue: 0 },
-    ],
-  },
-  {
-    id: "usa-canada",
-    index: 2,
-    title: loc("США, Канада", "USA, Canada", "ԱՄՆ, Կանադա"),
-    seatsTotal: 96,
     seatsOccupied: 1,
     candidates: 0,
-    entries: [
-      { label: loc("армянские общины", "Armenian communities", "հայկական համայնքներ"), seats: loc("40 мест", "40 seats", "40 տեղ"), seatsValue: 40 },
-      { label: loc("иные армянские структуры", "other Armenian structures", "հայկական այլ կառույցներ"), seats: loc("15 мест", "15 seats", "15 տեղ"), seatsValue: 15 },
-      { label: loc("Армянский конгресс", "Armenian Congress", "Հայկական Համագումար"), seats: loc("18 мест", "18 seats", "18 տեղ"), seatsValue: 18 },
-      { label: loc("Ай Дат", "Hay Dat", "Հայ Դատ"), seats: loc("6 мест", "6 seats", "6 տեղ"), seatsValue: 6 },
-      { label: loc("Благотворительные структуры", "Charitable organizations", "Բարեգործական"), seats: loc("5 мест", "5 seats", "5 տեղ"), seatsValue: 5 },
-      { label: loc("традиционные партии", "traditional parties", "Ավանդական կուսակցություններ"), seats: loc("12 мест", "12 seats", "12 տեղ"), seatsValue: 12 },
-    ],
-  },
-  {
-    id: "russia",
-    index: 3,
-    title: loc("РФ", "Russia", "ՌԴ"),
-    seatsTotal: 55,
-    seatsOccupied: 15,
-    candidates: 0,
-    entries: [
-      { label: loc("армянские общины", "Armenian communities", "հայկական համայնքներ"), seats: loc("35 мест", "35 seats", "35 տեղ"), seatsValue: 35 },
-      { label: loc("Армянский конгресс", "Armenian Congress", "Հայկական Կոնգրես"), seats: loc("10 мест", "10 seats", "10 տեղ"), seatsValue: 10 },
-      { label: loc("РҲМ", "RHM", "ՌՀՄ"), seats: loc("10 мест", "10 seats", "10 տեղ"), seatsValue: 10 },
-    ],
-  },
-  {
-    id: "middle-east",
-    index: 4,
-    title: loc("Страны Ближнего Востока", "Middle Eastern countries", "Մերձավոր Արևելքի երկրներ"),
-    seatsTotal: 30,
-    seatsOccupied: 0,
-    candidates: 0,
-    entries: [
-      { label: loc("армянские общины", "Armenian communities", "հայկական համայնքներ"), seats: loc("20 мест", "20 seats", "20 տեղ"), seatsValue: 20 },
-      { label: loc("армянские структуры", "Armenian structures", "հայկական կառույցներ"), seats: loc("10 мест", "10 seats", "10 տեղ"), seatsValue: 10 },
-    ],
-  },
-  {
-    id: "latin-america",
-    index: 5,
-    title: loc("Страны Латинской Америки", "Latin American countries", "Լատ. Ամերիկայի երկրներ"),
-    seatsTotal: 40,
-    seatsOccupied: 0,
-    candidates: 0,
-    entries: [
-      { label: loc("армянские общины", "Armenian communities", "հայկական համայնքներ"), seats: loc("30 мест", "30 seats", "30 տեղ"), seatsValue: 30 },
-      { label: loc("армянские структуры", "Armenian structures", "հայկական կառույցներ"), seats: loc("10 мест", "10 seats", "10 տեղ"), seatsValue: 10 },
-    ],
-  },
-  {
-    id: "australia-asia",
-    index: 6,
-    title: loc("Австралия, страны Южной и Восточной Азии", "Australia, South and East Asian countries", "Ավստրալիա, Հարավային և Արևելյան Ասիայի երկրներ"),
-    seatsTotal: 30,
-    seatsOccupied: 0,
-    candidates: 0,
-    entries: [
-      { label: loc("армянские общины", "Armenian communities", "հայկական համայնքներ"), seats: loc("30 мест", "30 seats", "30 տեղ"), seatsValue: 30 },
-    ],
-  },
-  {
-    id: "europe",
-    index: 7,
-    title: loc("Европейские страны", "European countries", "Եվրոպական երկրներ"),
-    seatsTotal: 82,
-    seatsOccupied: 6,
-    candidates: 0,
-    entries: [
-      { label: loc("армянские общины", "Armenian communities", "հայկական համայնքներ"), seats: loc("50 мест", "50 seats", "50 տեղ"), seatsValue: 50 },
-      { label: loc("армянские структуры", "Armenian structures", "հայկական կառույցներ"), seats: loc("26 мест", "26 seats", "26 տեղ"), seatsValue: 26 },
-      { label: loc("Ай Дат", "Hay Dat", "Հայ Դատ"), seats: loc("6 мест", "6 seats", "6 տեղ"), seatsValue: 6 },
-    ],
-  },
-  {
-    id: "central-asia-iran",
-    index: 8,
-    title: loc("Среднеазиатские страны и Иран", "Central Asian countries and Iran", "Միջին Ասիական երկրներ և Իրան"),
-    seatsTotal: 35,
-    seatsOccupied: 0,
-    candidates: 0,
-    entries: [
-      { label: loc("армянские общины", "Armenian communities", "հայկական համայնքներ"), seats: loc("35 мест", "35 seats", "35 տեղ"), seatsValue: 35 },
-    ],
-  },
-  {
-    id: "ukraine-georgia-moldova-belarus",
-    index: 9,
-    title: loc("Украина, Грузия, Молдова, Беларусь", "Ukraine, Georgia, Moldova, Belarus", "Ուկրաինա, Վրաստան, Մոլդովա, Բելոռուս"),
-    seatsTotal: 35,
-    seatsOccupied: 0,
-    candidates: 0,
-    entries: [
-      { label: loc("армянские общины", "Armenian communities", "հայկական համայնքներ"), seats: loc("35 мест", "35 seats", "35 տեղ"), seatsValue: 35 },
-    ],
-  },
-  {
-    id: "apostolic-church",
-    index: 10,
-    title: loc("Армянская Апостольская Церковь", "Armenian Apostolic Church", "Հայ Առաքելական եկեղեցի"),
-    seatsTotal: 14,
-    seatsOccupied: 0,
-    candidates: 0,
-    entries: [
-      { label: loc("Эчмиадзин", "Etchmiadzin", "Էջմիածին"), seats: loc("7 мест", "7 seats", "7 տեղ"), seatsValue: 7 },
-      { label: loc("Антилиас", "Antelias", "Անթիլիաս"), seats: loc("7 мест", "7 seats", "7 տեղ"), seatsValue: 7 },
-    ],
-  },
-  {
-    id: "catholic-evangelical",
-    index: 11,
-    title: loc("Католические и Евангелические церкви", "Catholic and Evangelical churches", "Կաթողիկե և Ավետարանչական եկեղեցիներ"),
-    seatsTotal: 10,
-    seatsOccupied: 0,
-    candidates: 0,
-    entries: [
-      { label: loc("Католические", "Catholic", "Կաթողիկե"), seats: loc("5 мест", "5 seats", "5 տեղ"), seatsValue: 5 },
-      { label: loc("Евангелические", "Evangelical", "Ավետարանչական"), seats: loc("5 мест", "5 seats", "5 տեղ"), seatsValue: 5 },
-    ],
-  },
-  {
-    id: "unions",
-    index: 12,
-    title: loc("Союзы", "Unions", "Միություններ"),
-    seatsTotal: 20,
-    seatsOccupied: 0,
-    candidates: 0,
-    entries: [
-      { label: loc("земляческие", "compatriot unions", "Հայրենակցական"), seats: loc("5 мест", "5 seats", "5 տեղ"), seatsValue: 5 },
-      { label: loc("Ай Ариакан", "Hay Ariakan", "Հայ Արիական"), seats: loc("3 места", "3 seats", "3 տեղ"), seatsValue: 3 },
-      { label: loc("Варданац", "Vardanats", "Վարդանաց"), seats: loc("2 места", "2 seats", "2 տեղ"), seatsValue: 2 },
-      { label: loc("Тагадир", "Tagadir", "Թագադիր"), seats: loc("5 мест", "5 seats", "5 տեղ"), seatsValue: 5 },
-      { label: loc("армянские беженцы из Азербайджана", "Armenian refugees from Azerbaijan", "Ադրբեջանի հայ փախստականներ"), seats: loc("5 мест", "5 seats", "5 տեղ"), seatsValue: 5 },
-    ],
+    description: loc(
+      "Армянская община Ирана",
+      "Armenian community of Iran",
+      "Իրանի հայ համայնք",
+    ),
+    marker: { x: 60, y: 44 },
   },
 ];
 
@@ -908,302 +589,301 @@ export const documents: DocumentCard[] = [
 ];
 
 export const regionSenators: PersonCard[] = [
+  // --- Армения (120) ---
   {
-    id: "ashot-sarkisyan",
-    name: "Աշոտ Սարկիսյան",
+    id: "armenia-1",
+    name: "Ашот Саркисян",
     regionId: "armenia",
-    country: "Հայաստան",
-    city: "Երևան",
+    country: "Армения",
+    city: "",
     status: "mandate_holder",
     role: "Сенатор",
     photo:
       "https://static.wixstatic.com/media/a79dba_ef155fbafdea4e74ad46c46bcfadcba4~mv2.jpg/v1/fill/w_291,h_375,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/104352702_196084758331613_8875113999358829574_n_edited.jpg",
-    bio: "Опубликован в списке сенаторов блока Армения.",
+    socialUrl: "https://www.facebook.com/", bio: "Руководитель территориального центра ЦИК в Ереване.",
   },
+  { id: "armenia-2", name: "Азат Саргсян", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "armenia-3", name: "Григорий Айвазян", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "armenia-4", name: "Зорик Бахчян", regionId: "armenia", country: "Арцах", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "armenia-5", name: "Овик Аванесов", regionId: "armenia", country: "Арцах", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "armenia-6", name: "Мгер Арутюнян", regionId: "armenia", country: "Арцах", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "armenia-7", name: "Багур Карапетян", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "armenia-8", name: "Давид Алексанян", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "armenia-9", name: "Армен Седракян", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "armenia-10", name: "Мкртич Антонян", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "armenia-11", name: "Сурен Григор", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "armenia-12", name: "Хайк Варданян", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "armenia-13", name: "Геворг Манукян", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "armenia-14", name: "Сусанна Гюрджинян", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "armenia-15", name: "Аваг Хачатрян", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "armenia-16", name: "Армине Геворгян", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "armenia-17", name: "Аелета Дангян", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "armenia-18", name: "Армен Аветисян", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "armenia-19", name: "Армен Хачикян", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "armenia-20", name: "Армен Саргсян", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "armenia-21", name: "Эмма Бегиджанян", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "armenia-22", name: "Маарине Саргсян", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "armenia-23", name: "Марине Хачатрян", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "armenia-24", name: "Сурен Бадалов", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+
+  // --- РФ и страны СНГ (110) ---
   {
-    id: "inesa-asryan",
-    name: "Ինեսա Ասրյան",
-    regionId: "usa-canada",
-    distributionSectionId: "usa-canada",
-    country: "ԱՄՆ / Լատինական Ամերիկա",
-    city: "—",
-    status: "mandate_holder",
-    role: "Сенатор",
-    photo:
-      "https://static.wixstatic.com/media/a79dba_8c866f73d6324321b469e4da1e8b87ad~mv2.jpg/v1/fill/w_178,h_219,al_c,lg_1,q_80,enc_avif,quality_auto/373429398_264003073188625_247395331986758058_n_edited.jpg",
-    bio: "Опубликована в списке сенаторов блока США / Латинская Америка.",
-  },
-  {
-    id: "arsen-abrahamyan",
-    name: "Արսեն Աբրահամյան",
+    id: "russia-cis-1",
+    name: "Саак Авакян",
     regionId: "russia-cis",
-    distributionSectionId: "russia",
-    country: "ՌԴ և ԱՊՀ",
-    city: "—",
-    status: "mandate_holder",
-    role: "Сенатор",
-    photo:
-      "https://static.wixstatic.com/media/a79dba_4e03bd8306364985aa68cf17308fa53f~mv2.jpg/v1/fill/w_201,h_250,al_c,lg_1,q_80,enc_avif,quality_auto/292722245_508336167726892_21963698861800.jpg",
-    bio: "Опубликован в списке сенаторов блока РФ и стран СНГ.",
-  },
-  {
-    id: "artur-poghosyan",
-    name: "Արթուր Պողոսյան",
-    regionId: "russia-cis",
-    distributionSectionId: "russia",
-    country: "ՌԴ և ԱՊՀ",
-    city: "—",
-    status: "mandate_holder",
-    role: "Сенатор",
-    photo:
-      "https://static.wixstatic.com/media/a79dba_b35a48423d6141ef8cc9567cc48beb51~mv2.jpg/v1/fill/w_201,h_257,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/354488407_728875852323649_8250111534948152157_n_edited.jpg",
-    bio: "Опубликован в списке сенаторов блока РФ и стран СНГ.",
-  },
-  {
-    id: "lusine-hovakimyan",
-    name: "Լուսինե Հովակիմյան",
-    regionId: "russia-cis",
-    distributionSectionId: "russia",
-    country: "ՌԴ և ԱՊՀ",
-    city: "—",
-    status: "mandate_holder",
-    role: "Сенатор",
-    photo:
-      "https://static.wixstatic.com/media/a79dba_ff9498bd1da74fbfa20ccbfaf45c7e3c~mv2.jpg/v1/fill/w_201,h_272,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/59a28c7e-b632-4efe-b6a9-31ffedccc90a_edited_edited_edited.jpg",
-    bio: "Опубликована в списке сенаторов блока РФ и стран СНГ.",
-  },
-  {
-    id: "oganes-katikyan",
-    name: "Օգանես Կատիկյան",
-    regionId: "russia-cis",
-    distributionSectionId: "russia",
-    country: "ՌԴ և ԱՊՀ",
-    city: "—",
-    status: "mandate_holder",
-    role: "Сенатор",
-    photo:
-      "https://static.wixstatic.com/media/a79dba_70de2bef63f4464d9fad7ed8013d2d4a~mv2.jpg/v1/fill/w_208,h_291,al_c,lg_1,q_80,enc_avif,quality_auto/IMG-20230616-WA0000_edited.jpg",
-    bio: "Опубликован в списке сенаторов блока РФ и стран СНГ.",
-  },
-  {
-    id: "vladimir-pashayan",
-    name: "Վլադիմիր Փաշայան",
-    regionId: "russia-cis",
-    distributionSectionId: "russia",
-    country: "ՌԴ և ԱՊՀ",
-    city: "—",
-    status: "mandate_holder",
-    role: "Сенатор",
-    photo:
-      "https://static.wixstatic.com/media/a79dba_9b882ce10e27442e9b0c0408acfa100e~mv2.jpg/v1/fill/w_201,h_272,al_c,q_80,enc_avif,quality_auto/346103676_591424642786332_4162683423528836001_n_edited.jpg",
-    bio: "Опубликован в списке сенаторов блока РФ и стран СНГ.",
-  },
-  {
-    id: "luiza-iosifova",
-    name: "Լուիզա Իոսիֆովա",
-    regionId: "russia-cis",
-    distributionSectionId: "russia",
-    country: "ՌԴ և ԱՊՀ",
-    city: "—",
-    status: "mandate_holder",
-    role: "Сенатор",
-    photo:
-      "https://static.wixstatic.com/media/a79dba_c9fcac5912c8407ab04352d532949ce9~mv2.jpg/v1/fill/w_208,h_257,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/294821148_446948520627604_1989368671484391514_n_edited.jpg",
-    bio: "Опубликована в списке сенаторов блока РФ и стран СНГ.",
-  },
-  {
-    id: "armen-avagyan",
-    name: "Արմեն Ավագյան",
-    regionId: "russia-cis",
-    distributionSectionId: "russia",
-    country: "ՌԴ և ԱՊՀ",
-    city: "—",
-    status: "mandate_holder",
-    role: "Сенатор",
-    photo:
-      "https://static.wixstatic.com/media/a79dba_217b4bd92be0492d94d0d1f8af925f15~mv2.jpg/v1/fill/w_201,h_250,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/5771963a-8446-42c8-9d4b-195ba28a7beb_edited.jpg",
-    bio: "Опубликован в списке сенаторов блока РФ и стран СНГ.",
-  },
-  {
-    id: "davit-abrahamyan",
-    name: "Դավիթ Աբրահամյան",
-    regionId: "russia-cis",
-    distributionSectionId: "russia",
-    country: "ՌԴ և ԱՊՀ",
-    city: "—",
-    status: "mandate_holder",
-    role: "Сенатор",
-    photo:
-      "https://static.wixstatic.com/media/a79dba_f4495907a03347d2878cc8a06c377d0c~mv2.jpg/v1/fill/w_208,h_250,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/387518171_6712357708887454_7198709620081735399_n_edited_edited.jpg",
-    bio: "Опубликован в списке сенаторов блока РФ и стран СНГ.",
-  },
-  {
-    id: "sahak-avagyan",
-    name: "Սահակ Ավագյան",
-    regionId: "russia-cis",
-    distributionSectionId: "russia",
-    country: "ՌԴ և ԱՊՀ",
-    city: "—",
+    country: "Россия / СНГ",
+    city: "",
     status: "mandate_holder",
     role: "Сенатор",
     photo:
       "https://static.wixstatic.com/media/a79dba_32de490f99634cbdbacb4b3722a43def~mv2.jpg/v1/fill/w_233,h_272,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/292534834_592863545563658_8881670996754971955_n_edited.jpg",
-    bio: "Опубликован в списке сенаторов блока РФ и стран СНГ.",
+    socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры.",
   },
   {
-    id: "robert-abrahamyan-russia",
-    name: "Ռոբերտ Աբրահամյան",
+    id: "russia-cis-2",
+    name: "Луиза Иосифова",
     regionId: "russia-cis",
-    distributionSectionId: "russia",
-    country: "ՌԴ և ԱՊՀ",
-    city: "—",
+    country: "Россия / СНГ",
+    city: "",
     status: "mandate_holder",
     role: "Сенатор",
     photo:
-      "https://static.wixstatic.com/media/a79dba_d3295916c3094983b31b119eaed07fae~mv2.jpg/v1/fill/w_223,h_266,al_c,lg_1,q_80,enc_avif,quality_auto/373416727_1013799816711012_4773968636419086474_n_edited.jpg",
-    bio: "Опубликован в списке сенаторов блока РФ и стран СНГ.",
+      "https://static.wixstatic.com/media/a79dba_c9fcac5912c8407ab04352d532949ce9~mv2.jpg/v1/fill/w_208,h_257,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/294821148_446948520627604_1989368671484391514_n_edited.jpg",
+    socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры.",
   },
   {
-    id: "garik-ghazaryan",
-    name: "Գարիկ Ղազարյան",
+    id: "russia-cis-3",
+    name: "Арсен Абраамян",
     regionId: "russia-cis",
-    distributionSectionId: "russia",
-    country: "ՌԴ և ԱՊՀ",
-    city: "—",
+    country: "Россия / СНГ",
+    city: "",
     status: "mandate_holder",
     role: "Сенатор",
     photo:
-      "https://static.wixstatic.com/media/a79dba_8786161b0a7a4bf6bafa71505ca95f9e~mv2.jpg/v1/crop/x_3,y_40,w_266,h_344/fill/w_208,h_269,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/344715399_942911610248699_40845791885057.jpg",
-    bio: "Опубликован в списке сенаторов блока РФ и стран СНГ.",
+      "https://static.wixstatic.com/media/a79dba_4e03bd8306364985aa68cf17308fa53f~mv2.jpg/v1/fill/w_201,h_250,al_c,lg_1,q_80,enc_avif,quality_auto/292722245_508336167726892_21963698861800.jpg",
+    socialUrl: "https://www.facebook.com/", bio: "Руководитель территориального центра ЦИК в Москве.",
   },
   {
-    id: "hamlet-tatoyan",
-    name: "Համլետ Թաթոյան",
+    id: "russia-cis-4",
+    name: "Давид Абраамян",
     regionId: "russia-cis",
-    distributionSectionId: "russia",
-    country: "ՌԴ և ԱՊՀ",
-    city: "—",
+    country: "Россия / СНГ",
+    city: "",
     status: "mandate_holder",
     role: "Сенатор",
     photo:
-      "https://static.wixstatic.com/media/a79dba_f60f2fe934034512ac9f4cb238335bec~mv2.jpg/v1/fill/w_193,h_226,al_c,lg_1,q_80,enc_avif,quality_auto/372314546_686875743319574_63640034478766.jpg",
-    bio: "Опубликован в списке сенаторов блока РФ и стран СНГ.",
+      "https://static.wixstatic.com/media/a79dba_f4495907a03347d2878cc8a06c377d0c~mv2.jpg/v1/fill/w_208,h_250,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/387518171_6712357708887454_7198709620081735399_n_edited_edited.jpg",
+    socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры.",
   },
+  { id: "russia-cis-5", name: "Аида Варданян", regionId: "russia-cis", country: "Россия / СНГ", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
   {
-    id: "smbat-hakobyan",
-    name: "Սմբատ Հակոբյան",
+    id: "russia-cis-6",
+    name: "Артур Айвазян",
     regionId: "russia-cis",
-    distributionSectionId: "russia",
-    country: "ՌԴ և ԱՊՀ",
-    city: "—",
-    status: "mandate_holder",
-    role: "Сенатор",
-    photo:
-      "https://static.wixstatic.com/media/a79dba_0bf1c532f5504a0b9e8d5d54d340f082~mv2.jpg/v1/fill/w_215,h_279,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/014-1_edited.jpg",
-    bio: "Опубликован в списке сенаторов блока РФ и стран СНГ.",
-  },
-  {
-    id: "artur-ayvazyan",
-    name: "Արթուր Այվազյան",
-    regionId: "russia-cis",
-    distributionSectionId: "russia",
-    country: "ՌԴ և ԱՊՀ",
-    city: "—",
+    country: "Россия / СНГ",
+    city: "",
     status: "mandate_holder",
     role: "Сенатор",
     photo:
       "https://static.wixstatic.com/media/a79dba_60abc6f03008456a81958436eebefeed~mv2.jpg/v1/crop/x_4,y_20,w_185,h_226/fill/w_233,h_284,al_c,lg_1,q_80,enc_avif,quality_auto/372908819_1325229595056099_1994672331029574826_n_edited.jpg",
-    bio: "Опубликован в списке сенаторов блока РФ и стран СНГ.",
+    socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры.",
   },
   {
-    id: "ghukas-manukyan-russia",
-    name: "Ղուկաս Մանուկյան",
+    id: "russia-cis-7",
+    name: "Гамлет Татоян",
     regionId: "russia-cis",
-    distributionSectionId: "russia",
-    country: "ՌԴ և ԱՊՀ",
-    city: "—",
+    country: "Россия / СНГ",
+    city: "",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_f60f2fe934034512ac9f4cb238335bec~mv2.jpg/v1/fill/w_193,h_226,al_c,lg_1,q_80,enc_avif,quality_auto/372314546_686875743319574_63640034478766.jpg",
+    socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры.",
+  },
+  { id: "russia-cis-8", name: "Арман", regionId: "russia-cis", country: "Россия / СНГ", city: "Димитровград", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  {
+    id: "russia-cis-9",
+    name: "Артур Погосян",
+    regionId: "russia-cis",
+    country: "Россия / СНГ",
+    city: "Кабарда",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_b35a48423d6141ef8cc9567cc48beb51~mv2.jpg/v1/fill/w_201,h_257,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/354488407_728875852323649_8250111534948152157_n_edited.jpg",
+    socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры.",
+  },
+  { id: "russia-cis-10", name: "Ашот Мурадян", regionId: "russia-cis", country: "Россия / СНГ", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "russia-cis-11", name: "Владимир Бегларян", regionId: "russia-cis", country: "Россия / СНГ", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  {
+    id: "russia-cis-12",
+    name: "Владимир Пашоян",
+    regionId: "russia-cis",
+    country: "Россия / СНГ",
+    city: "",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_9b882ce10e27442e9b0c0408acfa100e~mv2.jpg/v1/fill/w_201,h_272,al_c,q_80,enc_avif,quality_auto/346103676_591424642786332_4162683423528836001_n_edited.jpg",
+    socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры.",
+  },
+  {
+    id: "russia-cis-13",
+    name: "Гарик Газарян",
+    regionId: "russia-cis",
+    country: "Россия / СНГ",
+    city: "",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_8786161b0a7a4bf6bafa71505ca95f9e~mv2.jpg/v1/crop/x_3,y_40,w_266,h_344/fill/w_208,h_269,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/344715399_942911610248699_40845791885057.jpg",
+    socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры.",
+  },
+  {
+    id: "russia-cis-14",
+    name: "Гукас Манукян",
+    regionId: "russia-cis",
+    country: "Россия / СНГ",
+    city: "Молдова",
     status: "mandate_holder",
     role: "Сенатор",
     photo:
       "https://static.wixstatic.com/media/a79dba_b0b919ac1f294f6fb66b206def4c47df~mv2.jpg/v1/fill/w_208,h_257,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/355854081_1192897042105237_5971321152800836845_n_edited.jpg",
-    bio: "Опубликован в списке сенаторов блока РФ и стран СНГ.",
+    socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры.",
   },
   {
-    id: "avetis-sadoyan",
-    name: "Պրոֆ․ Ավետիս Սադոյան",
-    distributionSectionId: "europe",
-    country: "Եվրոպա",
-    city: "—",
+    id: "russia-cis-15",
+    name: "Оганнес Катикян",
+    regionId: "russia-cis",
+    country: "Россия / СНГ",
+    city: "",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_70de2bef63f4464d9fad7ed8013d2d4a~mv2.jpg/v1/fill/w_208,h_291,al_c,lg_1,q_80,enc_avif,quality_auto/IMG-20230616-WA0000_edited.jpg",
+    socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры.",
+  },
+  { id: "russia-cis-16", name: "Наира Саркисян", regionId: "russia-cis", country: "Россия / СНГ", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "russia-cis-17", name: "Размик", regionId: "russia-cis", country: "Россия / СНГ", city: "Чебоксары", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "russia-cis-18", name: "Феликс Бадалян", regionId: "russia-cis", country: "Россия / СНГ", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "russia-cis-19", name: "Ашот Шахсуварян", regionId: "russia-cis", country: "Россия / СНГ", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "russia-cis-20", name: "Вардан Арзуманян", regionId: "russia-cis", country: "Россия / СНГ", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "russia-cis-21", name: "Аршак Тигранвич", regionId: "russia-cis", country: "Россия / СНГ", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "russia-cis-22", name: "Армен Григорян", regionId: "russia-cis", country: "Россия / СНГ", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  {
+    id: "russia-cis-23",
+    name: "Армен Авагян",
+    regionId: "russia-cis",
+    country: "Россия / СНГ",
+    city: "",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_217b4bd92be0492d94d0d1f8af925f15~mv2.jpg/v1/fill/w_201,h_250,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/5771963a-8446-42c8-9d4b-195ba28a7beb_edited.jpg",
+    socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры.",
+  },
+  { id: "russia-cis-24", name: "Армен Артурович", regionId: "russia-cis", country: "Россия / СНГ", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "russia-cis-25", name: "Ашот Севян", regionId: "russia-cis", country: "Россия / СНГ", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  {
+    id: "russia-cis-26",
+    name: "Смбат Акопян",
+    regionId: "russia-cis",
+    country: "Россия / СНГ",
+    city: "",
+    status: "mandate_holder",
+    role: "Сенатор",
+    photo:
+      "https://static.wixstatic.com/media/a79dba_0bf1c532f5504a0b9e8d5d54d340f082~mv2.jpg/v1/fill/w_215,h_279,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/014-1_edited.jpg",
+    socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры.",
+  },
+
+  // --- США и Канада (100) ---
+  { id: "usa-canada-1", name: "Левон Улубабов", regionId: "usa-canada", country: "США / Канада", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "usa-canada-2", name: "Ваге Месропян", regionId: "usa-canada", country: "США / Канада", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Руководитель территориального центра ЦИК в Лос-Анджелесе." },
+  { id: "usa-canada-3", name: "Эдвин", regionId: "usa-canada", country: "США / Канада", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "usa-canada-4", name: "Артур Нуриджанян", regionId: "usa-canada", country: "США / Канада", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "usa-canada-5", name: "Мариам Яан", regionId: "usa-canada", country: "США / Канада", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "usa-canada-6", name: "Гагик Саакян", regionId: "usa-canada", country: "США / Канада", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "usa-canada-7", name: "Марине Казарян", regionId: "usa-canada", country: "США / Канада", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "usa-canada-8", name: "Лилит Манасян", regionId: "usa-canada", country: "США / Канада", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "usa-canada-9", name: "Агабек", regionId: "usa-canada", country: "США / Канада", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+
+  // --- Страны Севрского Договора (66) ---
+  {
+    id: "sevres-1",
+    name: "Аветис Садоян",
+    regionId: "sevres",
+    country: "Севрский договор",
+    city: "",
     status: "mandate_holder",
     role: "Сенатор",
     photo:
       "https://static.wixstatic.com/media/a79dba_fe7088e9823246f7b1e790f490801bc2~mv2.jpg/v1/fill/w_292,h_292,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/460961613_10234978697991892_8185912569949107483_n.jpg",
-    bio: "Опубликован в списке сенаторов блока Европа.",
+    socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры.",
   },
+  { id: "sevres-2", name: "Едуард Барсегян", regionId: "sevres", country: "Севрский договор", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "sevres-3", name: "Саркис Каспарян", regionId: "sevres", country: "Севрский договор", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "sevres-4", name: "Леонардо Басмаджян", regionId: "sevres", country: "Севрский договор", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
   {
-    id: "tigran-mikaelyan",
-    name: "Տիգրան Միքաելյան",
-    distributionSectionId: "europe",
-    country: "Եվրոպա",
-    city: "—",
-    status: "mandate_holder",
-    role: "Сенатор",
-    photo:
-      "https://static.wixstatic.com/media/a79dba_14837408cbca4a80aad6a3724255e072~mv2.jpg/v1/fill/w_194,h_292,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/460646920_10230333783361378_283805555592.jpg",
-    bio: "Опубликован в списке сенаторов блока Европа.",
-  },
-  {
-    id: "gevorg-grigoryan",
-    name: "Գևորգ Գրիգորյան",
-    distributionSectionId: "europe",
-    country: "Եվրոպա",
-    city: "—",
+    id: "sevres-5",
+    name: "Геворг Григорян",
+    regionId: "sevres",
+    country: "Севрский договор",
+    city: "",
     status: "mandate_holder",
     role: "Сенатор",
     photo:
       "https://static.wixstatic.com/media/a79dba_337af5131f904b31a78505ff6e08edb3~mv2.jpg/v1/fill/w_253,h_300,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/487002929_29523624217224689_2644955363019547876_n_edited.jpg",
-    bio: "Опубликован в списке сенаторов блока Европа.",
+    socialUrl: "https://www.facebook.com/", bio: "Руководитель территориального центра ЦИК в Вене.",
   },
   {
-    id: "robert-abrahamyan-europe",
-    name: "Ռոբերտ Աբրահամյան",
-    distributionSectionId: "europe",
-    country: "Եվրոպա",
-    city: "—",
+    id: "sevres-6",
+    name: "Тиграм Микаелян",
+    regionId: "sevres",
+    country: "Севрский договор",
+    city: "",
     status: "mandate_holder",
     role: "Сенатор",
     photo:
-      "https://static.wixstatic.com/media/a79dba_d3741a2a7a7941c5a940a97a0205f76d~mv2.jpg/v1/fill/w_287,h_329,al_c,lg_1,q_80,enc_avif,quality_auto/373416727_1013799816711012_4773968636419086474_n_edited.jpg",
-    bio: "Опубликован в списке сенаторов блока Европа.",
+      "https://static.wixstatic.com/media/a79dba_14837408cbca4a80aad6a3724255e072~mv2.jpg/v1/fill/w_194,h_292,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/460646920_10230333783361378_283805555592.jpg",
+    socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры.",
   },
+  { id: "sevres-7", name: "Кармен Мирзоян", regionId: "sevres", country: "Севрский договор", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "sevres-8", name: "Арарат Гукасян", regionId: "sevres", country: "Севрский договор", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "sevres-9", name: "Карине Айрапетян", regionId: "sevres", country: "Севрский договор", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "sevres-10", name: "Тигран Багратуни", regionId: "sevres", country: "Севрский договор", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "sevres-11", name: "Лариса Оганесян", regionId: "sevres", country: "Севрский договор", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+
+  // --- Южная Америка (42) ---
   {
-    id: "ghukas-manukyan-europe",
-    name: "Ղուկաս Մանուկյան",
-    distributionSectionId: "europe",
-    country: "Եվրոպա",
-    city: "—",
+    id: "south-america-1",
+    name: "Иннеса Асрян Катамикян",
+    regionId: "south-america",
+    country: "Бразилия",
+    city: "",
     status: "mandate_holder",
     role: "Сенатор",
     photo:
-      "https://static.wixstatic.com/media/a79dba_5358638a6a0549d496affd0a1eabd634~mv2.jpg/v1/fill/w_277,h_329,al_c,lg_1,q_80,enc_avif,quality_auto/355854081_1192897042105237_5971321152800836845_n_edited.jpg",
-    bio: "Опубликован в списке сенаторов блока Европа.",
+      "https://static.wixstatic.com/media/a79dba_8c866f73d6324321b469e4da1e8b87ad~mv2.jpg/v1/fill/w_178,h_219,al_c,lg_1,q_80,enc_avif,quality_auto/373429398_264003073188625_247395331986758058_n_edited.jpg",
+    socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры.",
   },
-  {
-    id: "artak-ghukasyan",
-    name: "Արտակ Ղուկասյան",
-    distributionSectionId: "europe",
-    country: "Եվրոպա",
-    city: "—",
-    status: "mandate_holder",
-    role: "Сенатор",
-    photo:
-      "https://static.wixstatic.com/media/a79dba_07265d55fa154612adb0219b9dcee2dc~mv2.jpg/v1/fill/w_234,h_329,al_c,lg_1,q_80,enc_avif,quality_auto/352409233_965868651533190_8739659972698191359_n_edited.jpg",
-    bio: "Опубликован в списке сенаторов блока Европа.",
-  },
+  { id: "south-america-2", name: "Саргис Карамикян", regionId: "south-america", country: "Бразилия", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+
+  // --- Страны Ближнего Востока (18) ---
+  { id: "middle-east-1", name: "Ваге Махчикян", regionId: "middle-east", country: "Ближний Восток", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "middle-east-2", name: "Нарек Абраамян", regionId: "middle-east", country: "Ближний Восток", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+
+  // --- Грузия (11) ---
+  { id: "georgia-1", name: "Геврог Екносян", regionId: "georgia", country: "Грузия", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "georgia-2", name: "Саркис Маркакян", regionId: "georgia", country: "Грузия", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+
+  // --- Иран (10) ---
+  { id: "iran-1", name: "Андраник Симонян", regionId: "iran", country: "Иран", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
 ];
-export const regionCandidates: PersonCard[] = [];
-export const institutionMandateHolders: PersonCard[] = [];
-export const institutionCandidates: PersonCard[] = [];
+export const regionCandidates: PersonCard[] = [
+  { id: "russia-cis-cand-1", name: "Армен Давтян", regionId: "russia-cis", country: "Россия / СНГ", city: "", status: "candidate", role: "Кандидат", votesFor: 0, votesAgainst: 0, socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "russia-cis-cand-2", name: "Шаген Петросян", regionId: "russia-cis", country: "Россия / СНГ", city: "", status: "candidate", role: "Кандидат", votesFor: 0, votesAgainst: 0, socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+];
 
 export const joinPageContent = {
   eyebrow: loc("Подача заявки"),
@@ -1255,6 +935,118 @@ export const structurePageContent = {
   ),
 };
 
+export const cecPageContent = {
+  eyebrow: loc("Избирательный процесс"),
+  title: loc("Центральная избирательная комиссия"),
+  description: loc(
+    "Единая система ЦИК полностью управляет процессом формирования Сената: от проведения онлайн-выборов и распределения 501 мандата до правовой поддержки избранных сенаторов.",
+  ),
+  stepsTitle: loc("Как проходят выборы"),
+  stepsText: loc(
+    "Процесс выстроен в три последовательных этапа — от безопасного онлайн-голосования до юридического сопровождения сенаторов.",
+  ),
+  steps: [
+    {
+      title: loc("Онлайн-выборы"),
+      description: loc(
+        "ЦИК организует безопасное дистанционное голосование, обеспечивает кибербезопасность и доступ для избирателей из любой точки мира.",
+      ),
+    },
+    {
+      title: loc("Распределение мандатов"),
+      description: loc(
+        "Проводит прозрачный подсчёт голосов, верифицирует результаты и закрепляет 501 мандат за региональными представителями.",
+      ),
+    },
+    {
+      title: loc("Правовая поддержка"),
+      description: loc(
+        "Обеспечивает юридическое сопровождение, помогает сенаторам войти в курс дела и координирует их дальнейшую правовую деятельность.",
+      ),
+    },
+  ],
+  factsTitle: loc("Общая информация и легитимность"),
+  factsText: loc(
+    "Ключевые параметры избирательного процесса Всеармянского сената.",
+  ),
+  facts: [
+    {
+      value: "Онлайн",
+      label: loc("Формат выборов"),
+      description: loc("Голосование проводится дистанционно, в режиме онлайн."),
+    },
+    {
+      value: "~300 000",
+      label: loc("Избирателей со всего мира"),
+      description: loc(
+        "Ожидаемая явка призвана обеспечить легитимность выборов.",
+      ),
+    },
+    {
+      value: "501",
+      label: loc("Сенатор"),
+      description: loc(
+        "Общее число мандатов не может быть менее 499 и более 501. Выборы завершаются, когда состав полностью укомплектован.",
+      ),
+    },
+    {
+      value: "5 лет",
+      label: loc("Срок полномочий"),
+      description: loc(
+        "На такой срок избираются сенаторы (кроме пожизненных).",
+      ),
+    },
+    {
+      value: "F-67075",
+      label: loc("Правовая база"),
+      description: loc(
+        "Выборы основаны на справочнике Совета Европы «Применение международных избирательных стандартов» (2016).",
+      ),
+    },
+  ],
+  structureTitle: loc("Структура комиссий"),
+  structureText: loc(
+    "Систему координируют штаб-квартира и четыре территориальных центра. Контроль за процессом выборов берёт на себя ЦИК в США (Лос-Анджелес).",
+  ),
+  hq: {
+    title: loc("Штаб-квартира"),
+    city: loc("Берлин, Германия"),
+    head: loc("Арам Мкртчян"),
+    flag: "de",
+  },
+  centers: [
+    { city: loc("Ереван, Армения"), head: loc("Ашот Саркисян"), flag: "am" },
+    { city: loc("Москва, Россия"), head: loc("Арсен Абраамян"), flag: "ru" },
+    { city: loc("Лос-Анджелес, США"), head: loc("Ваге Месропян"), flag: "us" },
+    { city: loc("Вена, ЕС"), head: loc("Геворг Григорян"), flag: "eu" },
+  ],
+  legalTitle: loc("Международно-правовая основа"),
+  legalText: loc(
+    "Деятельность Комиссии и процедура формирования Сената регламентированы международными нормами.",
+  ),
+  legalCards: [
+    {
+      title: loc("Совет Европы"),
+      badge: "F-67075",
+      description: loc(
+        "Методология и правила голосования опираются на справочник Совета Европы «Применение международных избирательных стандартов» (Council of Europe, Strasbourg, F-67075).",
+      ),
+    },
+    {
+      title: loc("Принципы гуманитарного права"),
+      badge: "jus in bello",
+      description: loc(
+        "Комиссия руководствуется принципами международного гуманитарного права, обеспечивая защиту прав и равный доступ к голосованию для всех участников.",
+      ),
+    },
+  ],
+  ctaTitle: loc("Выдвижение кандидатуры"),
+  ctaText: loc(
+    "Кандидатом может стать армянин, достигший 35 лет и обладающий определённым общественным авторитетом, независимо от места жительства. Приём заявок и регистрация кандидатов проходят онлайн.",
+  ),
+  ctaButton: loc("Подать заявку"),
+};
+
 export function getAlternates(locale: Locale, route: StaticRoute) {
   return {
     canonical: getCanonicalUrl(locale, route),
@@ -1288,10 +1080,3 @@ export function findRegionById(id: string) {
   return mandateRegions.find((item) => item.id === id);
 }
 
-export function findInstitutionById(id: string) {
-  return institutionBlocks.find((item) => item.id === id);
-}
-
-export function findDistributionSectionById(id: string) {
-  return mandateDistributionSections.find((item) => item.id === id);
-}

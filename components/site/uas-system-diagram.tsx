@@ -3,6 +3,7 @@
 import Image from "next/image";
 import {
   BadgeCheck,
+  ChevronDown,
   Landmark,
   Network,
   ShieldCheck,
@@ -59,7 +60,7 @@ const governanceItems = {
     {
       id: "mandates",
       title: "501 сенатский мандат",
-      description: "Представительная база UAS, распределённая по международным блокам.",
+      description: "Представительная база UAS, распределённая по международным блокам. В их число входят 12 пожизненных сенаторов.",
       icon: Landmark,
     },
     {
@@ -155,6 +156,7 @@ const bottomStrokeMuted = "rgba(23,107,77,0.24)";
 export function UasSystemDiagram({ locale }: { locale: Locale }) {
   const reduceMotion = useReducedMotion();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [openTaskId, setOpenTaskId] = useState<string | null>(null);
   const [layout, setLayout] = useState<DiagramLayout | null>(null);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -285,8 +287,8 @@ export function UasSystemDiagram({ locale }: { locale: Locale }) {
   }, [locale, topItems.length, bottomItems.length]);
 
   return (
-    <div className="relative overflow-hidden rounded-[36px] border border-[rgba(15,23,42,0.08)] bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(246,249,247,0.96))] px-5 py-5 shadow-[0_24px_64px_rgba(15,23,42,0.06)] sm:px-7 sm:py-7 lg:px-8 lg:py-8">
-      <div className="pointer-events-none absolute inset-0 opacity-50">
+    <div className="relative rounded-[36px] border border-[rgba(15,23,42,0.08)] bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(246,249,247,0.96))] px-5 py-5 shadow-[0_24px_64px_rgba(15,23,42,0.06)] sm:px-7 sm:py-7 lg:px-8 lg:py-8">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[36px] opacity-50">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_48%,rgba(183,138,55,0.08),transparent_26%),radial-gradient(circle_at_14%_18%,rgba(23,107,77,0.06),transparent_20%),radial-gradient(circle_at_85%_78%,rgba(23,107,77,0.04),transparent_18%)]" />
         <div
           className="absolute inset-0"
@@ -459,7 +461,7 @@ export function UasSystemDiagram({ locale }: { locale: Locale }) {
           <div className="mb-4 text-center text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--color-green)]">
             {copy.missionLabel}
           </div>
-          <div className="grid grid-cols-4 gap-5">
+          <div className="grid grid-cols-5 items-start gap-4">
             {bottomItems.map((item, index) => (
               <NetworkCard
                 key={item.id}
@@ -474,16 +476,21 @@ export function UasSystemDiagram({ locale }: { locale: Locale }) {
                 onFocus={() => setHoveredId(item.id)}
                 onBlur={() => setHoveredId(null)}
               >
-                <div className="flex items-start gap-3">
-                  <item.icon className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-green)]" />
-                  <div className="min-w-0">
-                    <div className="text-base font-semibold text-[var(--color-graphite)]">
-                      {item.title}
-                    </div>
-                    <p className="mt-1.5 text-sm leading-6 text-[var(--color-graphite-soft)]">
-                      {item.description}
-                    </p>
-                  </div>
+                <div className="text-base font-semibold leading-6 text-[var(--color-graphite)]">
+                  {item.title}
+                </div>
+                <div
+                  className={cn(
+                    "pointer-events-none absolute inset-x-0 top-full z-30 mt-2.5 rounded-2xl border border-[rgba(23,107,77,0.3)] bg-white p-4 text-left shadow-[0_30px_66px_rgba(23,107,77,0.26)] ring-1 ring-[rgba(23,107,77,0.12)] transition-all duration-200",
+                    hoveredId === item.id
+                      ? "translate-y-0 opacity-100"
+                      : "-translate-y-1 opacity-0",
+                  )}
+                >
+                  <span className="absolute -top-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rotate-45 rounded-[3px] border-l border-t border-[rgba(23,107,77,0.3)] bg-white" />
+                  <p className="text-sm leading-6 text-[var(--color-graphite)]">
+                    {item.description}
+                  </p>
                 </div>
               </NetworkCard>
             ))}
@@ -540,21 +547,42 @@ export function UasSystemDiagram({ locale }: { locale: Locale }) {
           <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--color-green)]">
             {copy.missionLabel}
           </div>
-          {bottomItems.map((item, index) => (
-            <MobileNetworkCard key={item.id} tone="bottom" delay={index * 0.05}>
-              <div className="flex items-start gap-3">
-                <item.icon className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-green)]" />
+          {bottomItems.map((item, index) => {
+            const isOpen = openTaskId === item.id;
+            return (
+              <MobileNetworkCard
+                key={item.id}
+                tone="bottom"
+                delay={index * 0.05}
+                isOpen={isOpen}
+                onClick={() => setOpenTaskId(isOpen ? null : item.id)}
+              >
                 <div className="min-w-0">
-                  <div className="text-base font-semibold text-[var(--color-graphite)]">
-                    {item.title}
+                  <div className="flex items-center justify-between gap-2 text-base font-semibold text-[var(--color-graphite)]">
+                    <span>{item.title}</span>
+                    <ChevronDown
+                      className={cn(
+                        "h-4 w-4 shrink-0 text-[var(--color-green)] transition-transform duration-300",
+                        isOpen && "rotate-180",
+                      )}
+                    />
                   </div>
-                  <p className="mt-1.5 text-sm leading-6 text-[var(--color-graphite-soft)]">
-                    {item.description}
-                  </p>
+                  <div
+                    className={cn(
+                      "grid transition-all duration-300",
+                      isOpen
+                        ? "mt-1.5 grid-rows-[1fr] opacity-100"
+                        : "grid-rows-[0fr] opacity-0",
+                    )}
+                  >
+                    <p className="overflow-hidden text-sm leading-6 text-[var(--color-graphite-soft)]">
+                      {item.description}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </MobileNetworkCard>
-          ))}
+              </MobileNetworkCard>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -591,11 +619,12 @@ const NetworkCard = forwardRef<
   return (
     <motion.div
       ref={ref}
-      whileHover={{ y: -4 }}
+      whileHover={{ y: -6 }}
       transition={{ duration: 0.22, ease: "easeOut" }}
       className={cn(
         "relative",
         side === "top" ? "pb-5" : "pt-5",
+        isActive ? "z-30" : undefined,
         className,
       )}
       onMouseEnter={onMouseEnter}
@@ -618,9 +647,12 @@ const NetworkCard = forwardRef<
       />
       <Card
         className={cn(
-          "rounded-[32px] border bg-white/72 px-6 py-5 shadow-[0_18px_44px_rgba(15,23,42,0.06)] backdrop-blur-md transition-colors",
+          "rounded-[32px] border bg-white/72 px-6 py-5 shadow-[0_18px_44px_rgba(15,23,42,0.06)] backdrop-blur-md transition duration-200",
           accent ? "border-[rgba(142,106,42,0.14)]" : "border-[rgba(15,23,42,0.08)]",
-          isActive ? "bg-white/92" : undefined,
+          isActive &&
+            (side === "top"
+              ? "border-[rgba(142,106,42,0.5)] bg-white shadow-[0_28px_60px_rgba(142,106,42,0.22)] ring-1 ring-[rgba(142,106,42,0.3)]"
+              : "border-[rgba(23,107,77,0.5)] bg-white shadow-[0_28px_60px_rgba(23,107,77,0.2)] ring-1 ring-[rgba(23,107,77,0.28)]"),
         )}
       >
         {children}
@@ -633,10 +665,14 @@ function MobileNetworkCard({
   children,
   tone,
   delay,
+  onClick,
+  isOpen,
 }: {
   children: ReactNode;
   tone: "top" | "bottom";
   delay: number;
+  onClick?: () => void;
+  isOpen?: boolean;
 }) {
   const reduceMotion = useReducedMotion();
 
@@ -646,7 +682,21 @@ function MobileNetworkCard({
       whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.3 }}
       transition={{ duration: 0.45, ease: "easeOut", delay }}
-      className="relative pl-6"
+      className={cn("relative pl-6", onClick && "cursor-pointer")}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      aria-expanded={onClick ? isOpen : undefined}
+      onClick={onClick}
+      onKeyDown={
+        onClick
+          ? (event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                onClick();
+              }
+            }
+          : undefined
+      }
     >
       <div
         className={cn(

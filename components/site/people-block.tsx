@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { ExternalLink } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -40,16 +41,29 @@ function PersonCardView({
         </h3>
         <div className="mt-2 text-sm font-medium text-[var(--color-gold)]">{person.role}</div>
         <div className="mt-3 text-sm leading-6 text-[var(--color-graphite-soft)]">
-          {person.country}, {person.city}
+          {person.city ? `${person.country}, ${person.city}` : person.country}
         </div>
-        <p className="mt-4 text-sm leading-6 text-[var(--color-graphite-soft)]">
-          {person.bio}
-        </p>
+        {person.bio ? (
+          <p className="mt-4 text-sm leading-6 text-[var(--color-graphite-soft)]">
+            {person.bio}
+          </p>
+        ) : null}
         {person.status === "candidate" ? (
           <div className="mt-4 flex gap-4 text-sm text-[var(--color-graphite-soft)]">
             <span>За: {person.votesFor ?? 0}</span>
             <span>Против: {person.votesAgainst ?? 0}</span>
           </div>
+        ) : null}
+        {person.socialUrl ? (
+          <a
+            href={person.socialUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-gold)]"
+          >
+            <ExternalLink className="h-4 w-4" />
+            Профиль
+          </a>
         ) : null}
       </div>
     </Card>

@@ -7,11 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  institutionBlocks,
-  joinPageContent,
-  mandateRegions,
-} from "@/data/site-content";
+import { joinPageContent, mandateRegions } from "@/data/site-content";
 import type { Locale } from "@/lib/i18n";
 
 export function JoinForm({ locale }: { locale: Locale }) {
@@ -47,9 +43,6 @@ export function JoinForm({ locale }: { locale: Locale }) {
           </option>
           {mandateRegions.map((region) => (
             <option key={region.id}>{region.title[locale]}</option>
-          ))}
-          {institutionBlocks.map((block) => (
-            <option key={block.id}>{block.title[locale]}</option>
           ))}
         </Select>
         <Input placeholder={joinPageContent.fields.organization[locale]} />

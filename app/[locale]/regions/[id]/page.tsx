@@ -67,12 +67,17 @@ export default async function RegionDetailPage({
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {[
               {
-                label: locale === "ru" ? "Всего мандатов" : locale === "en" ? "Total mandates" : "Ընդհանուր մանդատներ",
+                label: locale === "ru" ? "Всего" : locale === "en" ? "Total" : "Ընդամենը",
                 value: region.seatsTotal,
                 color: "text-[var(--color-graphite)]",
               },
               {
-                label: locale === "ru" ? "Занято" : locale === "en" ? "Occupied" : "Զբաղված",
+                label: locale === "ru" ? "Свободно" : locale === "en" ? "Free" : "Ազատ",
+                value: freeSeats,
+                color: "text-[var(--color-green)]",
+              },
+              {
+                label: locale === "ru" ? "Избрано" : locale === "en" ? "Elected" : "Ընտրված",
                 value: region.seatsOccupied,
                 color: "text-[var(--color-graphite)]",
               },
@@ -80,11 +85,6 @@ export default async function RegionDetailPage({
                 label: locale === "ru" ? "Кандидаты" : locale === "en" ? "Candidates" : "Թեկնածուներ",
                 value: region.candidates,
                 color: "text-[var(--color-graphite)]",
-              },
-              {
-                label: locale === "ru" ? "Свободно" : locale === "en" ? "Free" : "Ազատ",
-                value: freeSeats,
-                color: "text-[var(--color-green)]",
               },
             ].map((item) => (
               <Card key={item.label}>
@@ -97,48 +97,6 @@ export default async function RegionDetailPage({
               </Card>
             ))}
           </div>
-        </AnimatedSection>
-
-        <AnimatedSection>
-          <Card>
-            <h2 className="text-2xl font-semibold text-[var(--color-graphite)]">
-              {locale === "ru" ? "Мандаты региона" : locale === "en" ? "Region mandates" : "Տարածաշրջանի մանդատները"}
-            </h2>
-            <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-              <div className="rounded-2xl bg-[var(--color-surface-muted)] p-4 text-sm">
-                <div className="text-[var(--color-graphite-soft)]">
-                  {locale === "ru" ? "Общее количество мест" : locale === "en" ? "Total seats" : "Ընդհանուր տեղեր"}
-                </div>
-                <div className="mt-2 text-2xl font-semibold text-[var(--color-graphite)]">
-                  {region.seatsTotal}
-                </div>
-              </div>
-              <div className="rounded-2xl bg-[var(--color-surface-muted)] p-4 text-sm">
-                <div className="text-[var(--color-graphite-soft)]">
-                  {locale === "ru" ? "Занятые места" : locale === "en" ? "Occupied seats" : "Զբաղված տեղեր"}
-                </div>
-                <div className="mt-2 text-2xl font-semibold text-[var(--color-graphite)]">
-                  {region.seatsOccupied}
-                </div>
-              </div>
-              <div className="rounded-2xl bg-[var(--color-surface-muted)] p-4 text-sm">
-                <div className="text-[var(--color-graphite-soft)]">
-                  {locale === "ru" ? "Кандидаты на рассмотрении" : locale === "en" ? "Candidates under review" : "Քննարկվող թեկնածուներ"}
-                </div>
-                <div className="mt-2 text-2xl font-semibold text-[var(--color-graphite)]">
-                  {region.candidates}
-                </div>
-              </div>
-              <div className="rounded-2xl bg-[var(--color-surface-muted)] p-4 text-sm">
-                <div className="text-[var(--color-graphite-soft)]">
-                  {locale === "ru" ? "Свободные места" : locale === "en" ? "Free seats" : "Ազատ տեղեր"}
-                </div>
-                <div className="mt-2 text-2xl font-semibold text-[var(--color-green)]">
-                  {freeSeats}
-                </div>
-              </div>
-            </div>
-          </Card>
         </AnimatedSection>
 
         <AnimatedSection>

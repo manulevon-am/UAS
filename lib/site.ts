@@ -9,6 +9,7 @@ export const SITE_BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 export const routeKeys = [
   "home",
   "structure",
+  "cec",
   "documents",
   "news",
   "join",
@@ -19,6 +20,7 @@ export type RouteKey = (typeof routeKeys)[number];
 export const routePaths: Record<RouteKey, string> = {
   home: "",
   structure: "structure",
+  cec: "cec",
   documents: "documents",
   news: "news",
   join: "join",

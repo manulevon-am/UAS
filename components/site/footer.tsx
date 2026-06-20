@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import type { Locale } from "@/lib/i18n";
-import { getLocalizedPath } from "@/lib/site";
+import { getLocalizedPath, type RouteKey } from "@/lib/site";
 
 export function Footer({
   locale,
@@ -15,7 +15,7 @@ export function Footer({
     email: string;
     phone: string;
   };
-  navigation: { key: "home" | "structure" | "documents" | "news"; label: string }[];
+  navigation: { key: RouteKey; label: string }[];
 }) {
   return (
     <footer className="border-t border-[var(--color-border)] bg-white">

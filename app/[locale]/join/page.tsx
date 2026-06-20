@@ -4,7 +4,7 @@ import { AnimatedSection } from "@/components/site/animated-section";
 import { JoinForm } from "@/components/site/join-form";
 import { PageHero } from "@/components/site/page-hero";
 import { Card } from "@/components/ui/card";
-import { institutionBlocks, joinPageContent, mandateRegions } from "@/data/site-content";
+import { joinPageContent, mandateRegions } from "@/data/site-content";
 import { isLocale } from "@/lib/i18n";
 import { buildMetadata } from "@/lib/metadata";
 
@@ -66,22 +66,6 @@ export default async function JoinPage({
                       className="rounded-full border border-[var(--color-border)] bg-white px-3 py-1 text-xs text-[var(--color-graphite-soft)]"
                     >
                       {region.title[locale]}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <div className="text-sm font-semibold text-[var(--color-graphite)]">
-                  {locale === "ru" ? "Институциональные блоки" : locale === "en" ? "Institutional blocks" : "Ինստիտուցիոնալ բլոկներ"}
-                </div>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {institutionBlocks.map((block) => (
-                    <span
-                      key={block.id}
-                      className="rounded-full border border-[var(--color-border)] bg-white px-3 py-1 text-xs text-[var(--color-graphite-soft)]"
-                    >
-                      {block.title[locale]}
                     </span>
                   ))}
                 </div>

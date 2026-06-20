@@ -1,22 +1,31 @@
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Building2, CircleDot, Landmark, Users2 } from "lucide-react";
+import {
+  ArrowRight,
+  Building2,
+  CircleDot,
+  Landmark,
+  MapPin,
+  Scale,
+  Users2,
+} from "lucide-react";
 import { notFound } from "next/navigation";
 
 import { AnimatedSection } from "@/components/site/animated-section";
 import { HeroCobeGlobe } from "@/components/site/hero-cobe-globe";
 import { MandateMap } from "@/components/site/mandate-map";
 import { MandateDistributionAccordion } from "@/components/site/mandate-distribution-accordion";
-import { PartnersCarousel } from "@/components/site/partners-carousel";
 import { SectionHeading } from "@/components/site/section-heading";
 import { UasSystemDiagram } from "@/components/site/uas-system-diagram";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { buildMetadata } from "@/lib/metadata";
-import { getLocalizedPath } from "@/lib/site";
+import { getLocalizedPath, withBasePath } from "@/lib/site";
 import { isLocale } from "@/lib/i18n";
 import { homePageContent } from "@/data/site-content";
 
 const becomeIcons = [CircleDot, Users2, Building2, Landmark];
+const legalBasisIcons = [Landmark, Scale];
 
 export async function generateMetadata({
   params,
@@ -67,11 +76,6 @@ export default async function HomePage({
                   {locale === "ru" ? "Присоединиться" : locale === "en" ? "Join" : "Միանալ"}
                 </Button>
               </Link>
-              <Link href={getLocalizedPath(locale, "documents")}>
-                <Button variant="outline">
-                  {locale === "ru" ? "Документы" : locale === "en" ? "Documents" : "Փաստաթղթեր"}
-                </Button>
-              </Link>
             </div>
           </div>
 
@@ -79,8 +83,8 @@ export default async function HomePage({
         </div>
       </section>
 
-      <div className="mx-auto max-w-7xl space-y-16 px-4 py-14 sm:px-6 lg:px-8 lg:py-18">
-        <AnimatedSection>
+      <div className="mx-auto max-w-7xl space-y-20 px-4 py-14 sm:px-6 lg:px-8 lg:py-18">
+        <AnimatedSection className="relative z-20">
           <SectionHeading title={homePageContent.aboutTitle[locale]} align="center" />
           <div className="mt-6">
             <UasSystemDiagram locale={locale} />
@@ -103,7 +107,7 @@ export default async function HomePage({
             title={homePageContent.becomeTitle[locale]}
             description={homePageContent.becomeText[locale]}
           />
-          <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-8 grid gap-4 sm:grid-cols-3">
             {homePageContent.becomeCards.map((card, index) => {
               const Icon = becomeIcons[index];
               return (
@@ -116,6 +120,14 @@ export default async function HomePage({
               );
             })}
           </div>
+          <div className="mt-6 rounded-[18px] border border-[var(--color-border)] bg-[var(--color-surface-muted)] p-5">
+            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-gold)]">
+              {locale === "ru" ? "Условие избрания" : locale === "en" ? "Condition for election" : "Ընտրվելու պայմանը"}
+            </div>
+            <p className="mt-2 text-sm leading-7 text-[var(--color-graphite-soft)]">
+              {homePageContent.becomeCondition[locale]}
+            </p>
+          </div>
           <div className="mt-8">
             <Link href={getLocalizedPath(locale, "join")}>
               <Button size="lg">
@@ -127,7 +139,66 @@ export default async function HomePage({
         </AnimatedSection>
 
         <AnimatedSection>
-          <PartnersCarousel locale={locale} />
+          <SectionHeading
+            title={homePageContent.legalBasisTitle[locale]}
+            description={homePageContent.legalBasisText[locale]}
+          />
+          <div className="mt-8 grid gap-4 sm:grid-cols-2">
+            {homePageContent.legalBasisCards.map((card, index) => {
+              const Icon = legalBasisIcons[index] ?? Landmark;
+              return (
+                <Card key={card.title.ru} className="flex flex-col gap-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[rgba(142,106,42,0.09)] text-[var(--color-gold)]">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-muted)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--color-gold)]">
+                      {card.badge}
+                    </span>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-[var(--color-graphite)]">
+                      {card.title[locale]}
+                    </h3>
+                    <p className="mt-2 text-sm leading-7 text-[var(--color-graphite-soft)]">
+                      {card.description[locale]}
+                    </p>
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+        </AnimatedSection>
+
+        <AnimatedSection>
+          <SectionHeading
+            title={homePageContent.commissionsTitle[locale]}
+            align="center"
+          />
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {homePageContent.commissions.map((commission) => (
+              <Card key={commission.flag} className="flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <Image
+                    src={withBasePath(`/flags/${commission.flag}.svg`)}
+                    alt=""
+                    width={40}
+                    height={27}
+                    className="h-7 w-10 rounded-[3px] object-cover ring-1 ring-black/5"
+                  />
+                  <MapPin className="h-4 w-4 text-[var(--color-green)]" />
+                </div>
+                <div>
+                  <div className="text-base font-semibold text-[var(--color-graphite)]">
+                    {commission.country[locale]}
+                  </div>
+                  <div className="mt-1 text-sm leading-6 text-[var(--color-graphite-soft)]">
+                    {commission.office[locale]}
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
         </AnimatedSection>
       </div>
     </div>

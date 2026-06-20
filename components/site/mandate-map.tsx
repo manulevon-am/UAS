@@ -7,7 +7,7 @@ import worldLand from "world-atlas/land-110m.json";
 import type { JsVectorMapInstance } from "jsvectormap";
 
 import { Card } from "@/components/ui/card";
-import { getMandateOverview, institutionBlocks, mandateMapGroups } from "@/data/site-content";
+import { getMandateOverview, mandateRegions } from "@/data/site-content";
 import type { Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -27,15 +27,15 @@ const landPath = pathGenerator(landFeature as never) ?? "";
 const graticulePath = pathGenerator(geoGraticule10()) ?? "";
 
 const regionCoordinates: Record<string, [number, number]> = {
-  "sevres-18": [48.85, 7.0],
-  "usa-canada-total": [38.0, -97.0],
-  "russia-total": [55.0, 60.0],
-  "middle-east-total": [25.0, 45.0],
-  "latin-america-total": [-15.0, -58.0],
-  "australia-asia-total": [23.0, 100.0],
-  "europe-total": [49.0, 15.0],
-  "central-asia-iran-total": [38.0, 63.0],
-  "ukraine-georgia-moldova-belarus-total": [48.5, 33.0],
+  armenia: [40.18, 44.51],
+  "russia-cis": [55.75, 37.62],
+  "usa-canada": [40.0, -98.0],
+  sevres: [48.85, 2.35],
+  "south-america": [-15.0, -58.0],
+  "australia-asia": [-25.0, 134.0],
+  "middle-east": [34.0, 38.0],
+  georgia: [41.72, 44.79],
+  iran: [35.7, 51.42],
 };
 
 type CalloutPosition = Record<string, { x: number; y: number }>;
@@ -67,11 +67,11 @@ export function MandateMap({
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapWrapperRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<JsVectorMapInstance | null>(null);
-  const totals = getMandateOverview([...mandateMapGroups, ...institutionBlocks]);
+  const totals = getMandateOverview(mandateRegions);
 
   const markers = useMemo(
     () =>
-      mandateMapGroups.map((region) => ({
+      mandateRegions.map((region) => ({
         id: region.id,
         title: region.title[locale],
         seatsTotal: region.seatsTotal,
@@ -195,10 +195,9 @@ export function MandateMap({
         return;
       }
 
-      const [{ default: JsVectorMap }] = await Promise.all([
-        import("jsvectormap"),
-        import("jsvectormap/dist/maps/world.js"),
-      ]);
+      const { default: JsVectorMap } = await import("jsvectormap");
+      (window as typeof window & { jsVectorMap?: unknown }).jsVectorMap = JsVectorMap;
+      await import("jsvectormap/dist/maps/world.js");
 
       if (disposed || !mapContainerRef.current) {
         return;
@@ -318,7 +317,7 @@ export function MandateMap({
               stroke="rgba(148,163,184,0.36)"
               strokeWidth="1"
             />
-            {mandateMapGroups.map((region) => (
+            {mandateRegions.map((region) => (
               <circle
                 key={`compact-${region.id}`}
                 cx={(region.marker.x / 100) * MAP_WIDTH}
@@ -341,7 +340,7 @@ export function MandateMap({
           </div>
           <div className="bg-white px-4 py-3">
             <div className="text-[11px] uppercase tracking-[0.18em] text-[var(--color-graphite-soft)]">
-              {locale === "ru" ? "Занято" : locale === "en" ? "Occupied" : "Զբաղված"}
+              {locale === "ru" ? "Избрано" : locale === "en" ? "Elected" : "Ընտրված"}
             </div>
             <div className="mt-1 text-xl font-semibold text-[var(--color-graphite)]">
               {totals.seatsOccupied}
@@ -390,7 +389,7 @@ export function MandateMap({
             </div>
             <div className="rounded-2xl border border-[var(--color-border)] bg-white/84 px-3 py-3 text-center">
               <div className="text-[10px] uppercase tracking-[0.16em] text-[var(--color-graphite-soft)]">
-                {locale === "ru" ? "Занято" : locale === "en" ? "Occupied" : "Զբաղված"}
+                {locale === "ru" ? "Избрано" : locale === "en" ? "Elected" : "Ընտրված"}
               </div>
               <div className="mt-1 text-lg font-semibold text-[var(--color-graphite)]">
                 {totals.seatsOccupied}
