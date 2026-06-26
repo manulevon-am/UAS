@@ -1,15 +1,18 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ExternalLink } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import type { PersonCard } from "@/data/site-content";
+import type { Locale } from "@/lib/i18n";
 
 function PersonCardView({
   person,
+  locale,
 }: {
   person: PersonCard;
+  locale: Locale;
 }) {
   const initials = person.name
     .split(" ")
@@ -54,17 +57,13 @@ function PersonCardView({
             <span>Против: {person.votesAgainst ?? 0}</span>
           </div>
         ) : null}
-        {person.socialUrl ? (
-          <a
-            href={person.socialUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-gold)]"
-          >
-            <ExternalLink className="h-4 w-4" />
-            Профиль
-          </a>
-        ) : null}
+        <Link
+          href={`/${locale}/senators/${person.id}`}
+          className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-gold)]"
+        >
+          {locale === "ru" ? "Профиль" : locale === "en" ? "Profile" : "Էջ"}
+          <ArrowRight className="h-4 w-4" />
+        </Link>
       </div>
     </Card>
   );
@@ -74,12 +73,14 @@ export function PeopleBlock({
   title,
   emptyText,
   people,
+  locale,
   ctaHref,
   ctaLabel,
 }: {
   title: string;
   emptyText: string;
   people: PersonCard[];
+  locale: Locale;
   ctaHref?: string;
   ctaLabel?: string;
 }) {
@@ -103,7 +104,7 @@ export function PeopleBlock({
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {people.map((person) => (
-            <PersonCardView key={person.id} person={person} />
+            <PersonCardView key={person.id} person={person} locale={locale} />
           ))}
         </div>
       )}

@@ -54,7 +54,10 @@ export type PersonCard = {
   votesAgainst?: number;
   photo?: string;
   socialUrl?: string;
+  email?: string;
+  phone?: string;
   bio: string;
+  biography?: string;
 };
 
 export type DocumentCard = {
@@ -622,7 +625,7 @@ export const regionSenators: PersonCard[] = [
   { id: "armenia-19", name: "Армен Хачикян", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
   { id: "armenia-20", name: "Армен Саргсян", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
   { id: "armenia-21", name: "Эмма Бегиджанян", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
-  { id: "armenia-22", name: "Маарине Саргсян", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
+  { id: "armenia-22", name: "Марине Саргсян", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
   { id: "armenia-23", name: "Марине Хачатрян", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
   { id: "armenia-24", name: "Сурен Бадалов", regionId: "armenia", country: "Армения", city: "", status: "mandate_holder", role: "Сенатор", socialUrl: "https://www.facebook.com/", bio: "Общественный деятель, представитель армянской диаспоры." },
 
@@ -1079,4 +1082,13 @@ export function getMandateOverview(blocks: MandateBlock[]) {
 export function findRegionById(id: string) {
   return mandateRegions.find((item) => item.id === id);
 }
+
+export function findPersonById(id: string) {
+  return (
+    regionSenators.find((item) => item.id === id) ??
+    regionCandidates.find((item) => item.id === id)
+  );
+}
+
+export const allPeople: PersonCard[] = [...regionSenators, ...regionCandidates];
 

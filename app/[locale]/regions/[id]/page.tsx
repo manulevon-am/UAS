@@ -101,6 +101,7 @@ export default async function RegionDetailPage({
 
         <AnimatedSection>
           <PeopleBlock
+            locale={locale}
             title={locale === "ru" ? "Сенаторы региона" : locale === "en" ? "Regional senators" : "Տարածաշրջանի սենատորներ"}
             people={regionMandateHolders}
             emptyText={locale === "ru" ? "В этом регионе пока нет опубликованных сенаторов." : locale === "en" ? "No published senators in this region yet." : "Այս տարածաշրջանում դեռ հրապարակված սենատորներ չկան։"}
@@ -109,6 +110,7 @@ export default async function RegionDetailPage({
 
         <AnimatedSection>
           <PeopleBlock
+            locale={locale}
             title={locale === "ru" ? "Кандидаты" : locale === "en" ? "Candidates" : "Թեկնածուներ"}
             people={regionCandidateList}
             emptyText={locale === "ru" ? "В этом регионе пока нет опубликованных кандидатов." : locale === "en" ? "No published candidates in this region yet." : "Այս տարածաշրջանում դեռ հրապարակված թեկնածուներ չկան։"}
